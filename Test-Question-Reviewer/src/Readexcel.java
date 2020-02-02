@@ -24,7 +24,7 @@ public class Readexcel {
 		HSSFSheet sheet=wordbook.getSheetAt(0);
 		
 		//Set the starting row and ending row
-		int startRow=4;
+		int startRow=2;
 		int lastRow=sheet.getLastRowNum();
 		
 		//Set the column for each fields
@@ -66,7 +66,8 @@ public class Readexcel {
 			rowNum++;
 		}
 		
-		for(int i=0;i<qList.size();i++) {
+		//for(int i=0;i<qList.size();i++) {
+		for(int i=0;i<3;i++) {
 			Question question=qList.get(i);
 			System.out.println("Id: "+question.getId());
 			System.out.println("Question: "+question.getQuestion()+"");
