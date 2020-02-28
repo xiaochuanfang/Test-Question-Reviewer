@@ -2,7 +2,7 @@
 public class Question {
 
 	private int Id;
-	private String question;
+	private String statement;
 	private String[] choices;
 	private String answer;
 	
@@ -17,11 +17,11 @@ public class Question {
 	}
 
 	public String getQuestion() {
-		return question;
+		return statement;
 	}
 
 	public void setQuestion(String question) {
-		this.question = question;
+		this.statement = question;
 	}
 
 	public String[] getChoices() {

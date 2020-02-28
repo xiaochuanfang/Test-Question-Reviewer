@@ -14,7 +14,7 @@ public class Test extends JFrame {
 
 	private JPanel contentPane;
 	private JScrollPane scrollPane;
-	private JTextArea taQuestion;
+	private JTextArea taStatement;
 	private JButton btnChoice1;
 	private JButton btnChoice2;
 	private JButton btnChoice3;
@@ -26,26 +26,28 @@ public class Test extends JFrame {
 	 * Create the frame.
 	 */
 	public Test(ArrayList<Question> qlist) {
-		this.qlist=qlist;
-		qNumber=0;
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1354, 862);
+		//Initialized question number and question list
+		qNumber=0;
+		this.qlist=qlist;
+		
+		//Create content pane
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		taQuestion = new JTextArea();
-		taQuestion.setFont(new Font("Monospaced", Font.PLAIN, 25));
-		taQuestion.setWrapStyleWord(true);
-		taQuestion.setLineWrap(true);
-		//taQuestion.setBounds(15, 0, 795, 372);
+		//Create text area for statement
+		taStatement = new JTextArea();
+		taStatement.setFont(new Font("Monospaced", Font.PLAIN, 25));
+		taStatement.setWrapStyleWord(true);
+		taStatement.setLineWrap(true);
 		
-		scrollPane=new JScrollPane(taQuestion,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		//Create scroll pane for statement
+		scrollPane=new JScrollPane(taStatement,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setBounds(15, 0, 795, 372);
 		contentPane.add(scrollPane);
 		
+		//Create list of button for multiple choices
 		btnChoice1 = new JButton("");
 		btnChoice1.setName("Choice1");
 		btnChoice1.setHorizontalAlignment(SwingConstants.LEFT);
@@ -73,37 +75,56 @@ public class Test extends JFrame {
 		btnChoice4.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		btnChoice4.setBounds(15, 692, 795, 81);
 		contentPane.add(btnChoice4);
+		
+		//Set frame operation and position
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1354, 862);
+		setContentPane(contentPane);
 		setVisible(true);
 		
+		//Create action listener for the button
 		ActionListener listener=new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
+				/*
 				JButton button=(JButton) event.getSource();
 				String choiceSelected=button.getName();
 				System.out.println("You selected "+choiceSelected);
 				System.out.println(button.getText());
+				*/
 				loadQuestion();
 			}	
 		};
 		
+		//Add action listener for the buttons
 		btnChoice1.addActionListener(listener);
 		btnChoice2.addActionListener(listener);
 		btnChoice3.addActionListener(listener);
 		btnChoice4.addActionListener(listener);
 	
+		//Load text on the text area and buttons
 		loadQuestion();
 	}
 
 	public boolean loadQuestion() {
+		
+		//If still didn't finish all question in question list
 		if(qNumber<qlist.size()) {
+			
+			//Get current question number
 			Question question=qlist.get(qNumber);
-			taQuestion.setText(question.getQuestion());
+			
+			//Load the text for the statement and multiple choices
+			taStatement.setText(question.getQuestion());
 			btnChoice1.setText(question.getChoices()[0]);
 			btnChoice2.setText(question.getChoices()[1]);
 			btnChoice3.setText(question.getChoices()[2]);
 			btnChoice4.setText(question.getChoices()[3]);
+			
+			//Increment the question number
 			qNumber++;
+			
 			return true;
 		}
 		else {
