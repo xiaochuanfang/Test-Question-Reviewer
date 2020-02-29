@@ -51,28 +51,28 @@ public class Test extends JFrame {
 		btnChoice1 = new JButton("");
 		btnChoice1.setName("Choice1");
 		btnChoice1.setHorizontalAlignment(SwingConstants.LEFT);
-		btnChoice1.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnChoice1.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice1.setBounds(15, 401, 795, 81);
 		contentPane.add(btnChoice1);
 		
 		btnChoice2 = new JButton("");
 		btnChoice2.setName("Choice2");
 		btnChoice2.setHorizontalAlignment(SwingConstants.LEFT);
-		btnChoice2.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnChoice2.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice2.setBounds(15, 498, 795, 81);
 		contentPane.add(btnChoice2);
 		
 		btnChoice3 = new JButton("");
 		btnChoice3.setName("Choice3");
 		btnChoice3.setHorizontalAlignment(SwingConstants.LEFT);
-		btnChoice3.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnChoice3.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice3.setBounds(15, 595, 795, 81);
 		contentPane.add(btnChoice3);
 		
 		btnChoice4 = new JButton("");
 		btnChoice4.setName("Choice4");
 		btnChoice4.setHorizontalAlignment(SwingConstants.LEFT);
-		btnChoice4.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnChoice4.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice4.setBounds(15, 692, 795, 81);
 		contentPane.add(btnChoice4);
 		
