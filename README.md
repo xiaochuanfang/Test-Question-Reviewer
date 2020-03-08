@@ -9,9 +9,9 @@
 **Features**
 - Users can choose an Excel file to create a GUI test
 - Users can practice the test in sequential order
+- Users can get score for the test that they just took
 
 **Further Features**
-- Users can get score for the test that they just took
 - Users can practice the test question in random order
 - Users can review questions that they answer incorrectly
 - Users can see the progress of the test
