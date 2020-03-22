@@ -20,6 +20,7 @@ public class Test extends JFrame {
 	private JButton btnChoice3;
 	private JButton btnChoice4;
 	private ArrayList<Question> qlist;
+	private ArrayList<Score> slist;
 	private int qNumber;
 
 	/**
@@ -27,8 +28,9 @@ public class Test extends JFrame {
 	 */
 	public Test(ArrayList<Question> qlist) {
 		
-		//Initialized question number and question list
+		//Initialized question number,score list and question list
 		qNumber=0;
+		slist=new ArrayList<Score>();
 		this.qlist=qlist;
 		
 		//Create content pane
@@ -49,28 +51,28 @@ public class Test extends JFrame {
 		
 		//Create list of button for multiple choices
 		btnChoice1 = new JButton("");
-		btnChoice1.setName("Choice1");
+		btnChoice1.setName("A");
 		btnChoice1.setHorizontalAlignment(SwingConstants.LEFT);
 		btnChoice1.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice1.setBounds(15, 401, 795, 81);
 		contentPane.add(btnChoice1);
 		
 		btnChoice2 = new JButton("");
-		btnChoice2.setName("Choice2");
+		btnChoice2.setName("B");
 		btnChoice2.setHorizontalAlignment(SwingConstants.LEFT);
 		btnChoice2.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice2.setBounds(15, 498, 795, 81);
 		contentPane.add(btnChoice2);
 		
 		btnChoice3 = new JButton("");
-		btnChoice3.setName("Choice3");
+		btnChoice3.setName("C");
 		btnChoice3.setHorizontalAlignment(SwingConstants.LEFT);
 		btnChoice3.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice3.setBounds(15, 595, 795, 81);
 		contentPane.add(btnChoice3);
 		
 		btnChoice4 = new JButton("");
-		btnChoice4.setName("Choice4");
+		btnChoice4.setName("D");
 		btnChoice4.setHorizontalAlignment(SwingConstants.LEFT);
 		btnChoice4.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice4.setBounds(15, 692, 795, 81);
@@ -87,13 +89,24 @@ public class Test extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				/*
-				JButton button=(JButton) event.getSource();
-				String choiceSelected=button.getName();
-				System.out.println("You selected "+choiceSelected);
-				System.out.println(button.getText());
-				*/
-				loadQuestion();
+				
+				//Record the score after user push the choice button
+				recordScore(event);
+				
+				//Increment the question number
+				qNumber++;
+				
+				//If didn't finish last question in question list, load another question
+				if(qNumber<qlist.size()) {
+					loadQuestion();
+				}
+				//Otherwise print the test result
+				else {
+					Result result=new Result(slist);
+					dispose();
+					//printScore();
+					//System.exit(0);				
+				}
 			}	
 		};
 		
@@ -106,29 +119,48 @@ public class Test extends JFrame {
 		//Load text on the text area and buttons
 		loadQuestion();
 	}
-
-	public boolean loadQuestion() {
+	
+	public ArrayList<Score> recordScore(ActionEvent event){
 		
-		//If still didn't finish all question in question list
-		if(qNumber<qlist.size()) {
-			
-			//Get current question number
-			Question question=qlist.get(qNumber);
-			
-			//Load the text for the statement and multiple choices
-			taStatement.setText(question.getQuestion());
-			btnChoice1.setText(question.getChoices()[0]);
-			btnChoice2.setText(question.getChoices()[1]);
-			btnChoice3.setText(question.getChoices()[2]);
-			btnChoice4.setText(question.getChoices()[3]);
-			
-			//Increment the question number
-			qNumber++;
-			
-			return true;
+		//Get user's choice
+		JButton button=(JButton) event.getSource();
+		String choiceSelected=button.getName();
+		String answer=qlist.get(qNumber).getAnswer();
+		
+		//Create the score
+		Score score=new Score(qNumber,choiceSelected,answer);
+		if(checkAnswer(choiceSelected)) {
+			score.setCorrect(true);
 		}
 		else {
-			return false;
+			score.setCorrect(false);
 		}
+		
+		//Add to score list
+		slist.add(score);
+		return slist;
+	}
+	
+	public boolean checkAnswer(String choiceSelected) {
+	
+		//Check if user had chose the correct answer
+		String answer=qlist.get(qNumber).getAnswer();
+		if(choiceSelected.equals(answer)) {
+			return true;
+		}
+		return false;
+	}
+
+	public void loadQuestion() {
+		
+		//Get current question number
+		Question question=qlist.get(qNumber);
+			
+		//Load the text for the statement and multiple choices
+		taStatement.setText(question.getStatement());
+		btnChoice1.setText(question.getChoices()[0]);
+		btnChoice2.setText(question.getChoices()[1]);
+		btnChoice3.setText(question.getChoices()[2]);
+		btnChoice4.setText(question.getChoices()[3]);
 	}
 }

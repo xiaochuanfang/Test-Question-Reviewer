@@ -5,6 +5,7 @@ public class Question {
 	private String statement;
 	private String[] choices;
 	private String answer;
+	private boolean correct;
 	
 	public Question() {}
 	
@@ -16,14 +17,14 @@ public class Question {
 		Id = id;
 	}
 
-	public String getQuestion() {
+	public String getStatement() {
 		return statement;
 	}
 
-	public void setQuestion(String question) {
-		this.statement = question;
+	public void setStatement(String statement) {
+		this.statement = statement;
 	}
-
+	
 	public String[] getChoices() {
 		return choices;
 	}
@@ -40,5 +41,11 @@ public class Question {
 		this.answer = answer;
 	}
 
-	
+	public boolean isCorrect() {
+		return correct;
+	}
+
+	public void setCorrect(boolean correct) {
+		this.correct = correct;
+	}
 }

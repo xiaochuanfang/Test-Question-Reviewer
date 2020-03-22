@@ -13,50 +13,50 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Readexcel {
 	
-	//Default constructor
+	private File file;
+	private FileInputStream fi;
+	private HSSFWorkbook wordbook;
+	private HSSFSheet sheet;
+	
+	//Constructors
 	public Readexcel() {}
 	
-	public ArrayList<Question> createQuestionList(File file) throws IOException {
+	public Readexcel(File file) throws IOException {
 		
 		//Read excel file at sheet 0
-		FileInputStream fi=new FileInputStream(file);
-		HSSFWorkbook wordbook=new HSSFWorkbook(fi);
-		HSSFSheet sheet=wordbook.getSheetAt(0);
-		
-		//Set the starting row and ending row
-		int startRow=2;
-		int lastRow=sheet.getLastRowNum();
-		
-		//Set the column for each fields
-		int idColumn=0;
-		int questionColumn=3;
-		int answerColumn=8;
-		int choiceColumn=4;
-		int numOfChoice=4;
-		
+		this.file=file;
+		fi=new FileInputStream(file);
+		wordbook=new HSSFWorkbook(fi);
+		sheet=wordbook.getSheetAt(0);
+	}
+	
+	public ArrayList<Question> createQuestionList(int idColumn, int quesColumn, int ansColumn, int choiStartColumn, int choiEndColumn, int startRow) throws IOException {
+
 		//ArrayList to store list of Question object
 		ArrayList<Question> qList=new ArrayList<Question>();
 		
+		int lastRow=sheet.getLastRowNum();
 		int rowNum=startRow;
+		
 		while(rowNum<=lastRow) {
 			
 			//Get the cell of id, question and answer for current row
 			Cell id=sheet.getRow(rowNum).getCell(idColumn);
-			Cell startQuestion=sheet.getRow(rowNum).getCell(questionColumn);
-			Cell startAnswer=sheet.getRow(rowNum).getCell(answerColumn);
+			Cell startQuestion=sheet.getRow(rowNum).getCell(quesColumn);
+			Cell startAnswer=sheet.getRow(rowNum).getCell(ansColumn);
 			
 			//Create a question object
 			Question question=new Question();
 			
 			//Set the question object's id, question and answer for the question object
 			question.setId((int)id.getNumericCellValue());
-			question.setQuestion(startQuestion.getStringCellValue());
+			question.setStatement(startQuestion.getStringCellValue());
 			question.setAnswer(startAnswer.getStringCellValue());
 			
 			//Set the multiple choices for the question object
-			String[] choices=new String[numOfChoice];
+			String[] choices=new String[choiEndColumn-choiStartColumn+1];
 			for(int i=0;i<choices.length;i++) {
-				Cell nextChoice=sheet.getRow(rowNum).getCell(choiceColumn+i);
+				Cell nextChoice=sheet.getRow(rowNum).getCell(choiStartColumn+i);
 				choices[i]=nextChoice.toString();
 			}
 			question.setChoices(choices);
@@ -64,17 +64,6 @@ public class Readexcel {
 			//Add the question object into the question list
 			qList.add(question);
 			rowNum++;
-		}
-		
-		//for(int i=0;i<qList.size();i++) {
-		for(int i=0;i<3;i++) {
-			Question question=qList.get(i);
-			System.out.println("Id: "+question.getId());
-			System.out.println("Question: "+question.getQuestion()+"");
-			for(int j=0;j<question.getChoices().length;j++) {
-				System.out.println("Choice "+j+": "+question.getChoices()[j]);
-			}
-			System.out.println("Answer: "+question.getAnswer());
 		}
 		
 		//Close the wordbook and file reader

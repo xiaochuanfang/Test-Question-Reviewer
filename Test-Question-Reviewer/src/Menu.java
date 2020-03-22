@@ -73,14 +73,8 @@ public class Menu extends JFrame {
 					File file=chooser.getSelectedFile();
 					
 					//Create the Question ArrayList and start a new Test
-					Readexcel reader=new Readexcel(); 
-					try {
-						ArrayList<Question> qlist=reader.createQuestionList(file);
-						Test test=new Test(qlist);
-						dispose();
-					} catch (IOException exception) {
-						exception.printStackTrace();
-					}
+					UserInput userInput=new UserInput(file);
+					dispose();
 				}
 			}
 		});
