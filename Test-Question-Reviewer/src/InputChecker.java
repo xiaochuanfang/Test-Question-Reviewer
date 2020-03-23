@@ -15,7 +15,7 @@ public class InputChecker {
 		return true;
 	}
 	
-	//Checi if input is a positive integer
+	//Check if input is a positive integer
 	public boolean isPosInt(int n, boolean acceptZero) {
 		if(acceptZero) {
 			if(n>=0) {

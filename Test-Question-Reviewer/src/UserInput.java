@@ -6,8 +6,12 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -15,6 +19,14 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 
 public class UserInput extends JFrame {
+	
+	private JTextArea taID;
+	private JTextArea taStatement;
+	private JTextArea taAnswer;
+	private JTextArea taStartChoice;
+	private JTextArea taEndChoice;
+	private JTextArea taStartRow;
+	private File defaultFile=new File("default.txt");
 	
 	/**
 	 * Create the frame.
@@ -27,37 +39,37 @@ public class UserInput extends JFrame {
 		contentPane.setLayout(null);
 		
 		//Create text area for ID column input
-		JTextArea taID = new JTextArea();
+		taID = new JTextArea();
 		taID.setFont(new Font("Monospaced", Font.PLAIN, 20));
 		taID.setBounds(62, 110, 117, 44);
 		contentPane.add(taID);
 		
 		//Create text area for question column input
-		JTextArea taStatement = new JTextArea();
+		taStatement = new JTextArea();
 		taStatement.setFont(new Font("Monospaced", Font.PLAIN, 20));
 		taStatement.setBounds(282, 110, 117, 44);
 		contentPane.add(taStatement);
 		
 		//Create text area for answer column input
-		JTextArea taAnswer = new JTextArea();
+		taAnswer = new JTextArea();
 		taAnswer.setFont(new Font("Monospaced", Font.PLAIN, 20));
 		taAnswer.setBounds(489, 110, 117, 44);
 		contentPane.add(taAnswer);
 		
 		//Create text area for choice start column input
-		JTextArea taStartChoice = new JTextArea();
+		taStartChoice = new JTextArea();
 		taStartChoice.setFont(new Font("Monospaced", Font.PLAIN, 20));
 		taStartChoice.setBounds(698, 110, 44, 44);
 		contentPane.add(taStartChoice);
 		
 		//Create text area for choice end column input
-		JTextArea taEndchoice = new JTextArea();
-		taEndchoice.setFont(new Font("Monospaced", Font.PLAIN, 20));
-		taEndchoice.setBounds(771, 110, 44, 44);
-		contentPane.add(taEndchoice);
+		taEndChoice = new JTextArea();
+		taEndChoice.setFont(new Font("Monospaced", Font.PLAIN, 20));
+		taEndChoice.setBounds(771, 110, 44, 44);
+		contentPane.add(taEndChoice);
 		
 		//Create text area for start row input 
-		JTextArea taStartRow = new JTextArea();
+		taStartRow = new JTextArea();
 		taStartRow.setFont(new Font("Monospaced", Font.PLAIN, 20));
 		taStartRow.setBounds(62, 257, 117, 44);
 		contentPane.add(taStartRow);
@@ -115,7 +127,7 @@ public class UserInput extends JFrame {
 				String inputQues=taStatement.getText();
 				String inputAns=taAnswer.getText();
 				String inputChoi=taStartChoice.getText();
-				String inputChoi2=taEndchoice.getText();
+				String inputChoi2=taEndChoice.getText();
 				String inputStartAt=taStartRow.getText();
 				
 				InputChecker check=new InputChecker();
@@ -141,6 +153,10 @@ public class UserInput extends JFrame {
 							Readexcel reader=new Readexcel(file); 
 							ArrayList<Question> qlist=reader.createQuestionList(ID,ques,ans,choi,choi2,startAt);
 							Test test=new Test(qlist);
+							
+							//Save the input values for next time
+							saveDefaultValue();
+							
 							dispose();
 						} catch (IOException exception) {
 							exception.printStackTrace();
@@ -149,13 +165,15 @@ public class UserInput extends JFrame {
 					
 					//If user enter a non-numerical input for start row, show an error message
 					else {
-						JOptionPane.showMessageDialog(null, "Enter an number for the 'Start At Row'!","Invalid Input", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Enter an number for the 'Start At Row'!",
+								"Invalid Input", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				
 				//If user enter a non-alphabet input for id, question, answer and choices, show an error message
 				else {
-					JOptionPane.showMessageDialog(null, "Enter an Engish alphabet for the first 5 inputs!","Invalid Input", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Enter an Engish alphabet for the first 5 inputs!",
+							"Invalid Input", JOptionPane.ERROR_MESSAGE);
 				}
 				
 			}
@@ -163,7 +181,7 @@ public class UserInput extends JFrame {
 		
 		//Set the "Start test" button attribute
 		btnStartTest.setFont(new Font("Monospaced", Font.BOLD, 25));
-		btnStartTest.setBounds(486, 257, 197, 44);
+		btnStartTest.setBounds(489, 257, 197, 44);
 		contentPane.add(btnStartTest);
 		
 		//Button for cancel the test
@@ -178,14 +196,53 @@ public class UserInput extends JFrame {
 		
 		//Set the "Cancel" button attribute
 		btnCancel.setFont(new Font("Monospaced", Font.BOLD, 25));
-		btnCancel.setBounds(732, 257, 146, 44);
+		btnCancel.setBounds(735, 257, 146, 44);
 		contentPane.add(btnCancel);
+
+		//Load last use value
+		try {
+			loadLastValue();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//Set frame operation and position
 		setContentPane(contentPane);		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 929, 396);
+		setBounds(100, 100, 929, 450);
 		setVisible(true);
 	}
 	
+	//Save user inputs include ID, question, answer, choices and start row for next time
+	public void saveDefaultValue() throws IOException {
+		defaultFile.createNewFile();
+		FileWriter fileWriter=new FileWriter(defaultFile);
+		
+		fileWriter.write(taID.getText()+"\n");
+		fileWriter.write(taStatement.getText()+"\n");
+		fileWriter.write(taAnswer.getText()+"\n");
+		fileWriter.write(taStartChoice.getText()+"\n");
+		fileWriter.write(taEndChoice.getText()+"\n");
+		fileWriter.write(taStartRow.getText());
+		
+		fileWriter.close();
+	}
+	
+	//Reload last time user inputs include ID, question, answser, choices and start row
+	public void loadLastValue() throws IOException {
+		if(defaultFile.exists()) {
+			FileReader fileReader=new FileReader(defaultFile);
+			Scanner scanner=new Scanner(fileReader);
+			
+			taID.setText(scanner.next());
+			taStatement.setText(scanner.next());
+			taAnswer.setText(scanner.next());
+			taStartChoice.setText(scanner.next());
+			taEndChoice.setText(scanner.next());
+			taStartRow.setText(scanner.next());
+			
+			scanner.close();
+		}
+	}
 }
