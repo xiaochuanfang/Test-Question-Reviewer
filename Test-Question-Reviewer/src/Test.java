@@ -24,6 +24,8 @@ public class Test extends JFrame {
 	private ArrayList<Question> qlist;
 	private ArrayList<Score> slist;
 	private int qNumber;
+	
+	private final int MAX_CHOICES=5;
 
 	/**
 	 * Create the frame.
@@ -58,7 +60,6 @@ public class Test extends JFrame {
 		btnChoice1.setHorizontalAlignment(SwingConstants.LEFT);
 		btnChoice1.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice1.setBounds(15, 401, 795, 81);
-		btnChoice1.setVisible(false);
 		blist.add(btnChoice1);
 		contentPane.add(btnChoice1);
 		
@@ -67,7 +68,6 @@ public class Test extends JFrame {
 		btnChoice2.setHorizontalAlignment(SwingConstants.LEFT);
 		btnChoice2.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice2.setBounds(15, 498, 795, 81);
-		btnChoice2.setVisible(false);
 		blist.add(btnChoice2);
 		contentPane.add(btnChoice2);
 		
@@ -76,7 +76,6 @@ public class Test extends JFrame {
 		btnChoice3.setHorizontalAlignment(SwingConstants.LEFT);
 		btnChoice3.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice3.setBounds(15, 595, 795, 81);
-		btnChoice3.setVisible(false);
 		blist.add(btnChoice3);
 		contentPane.add(btnChoice3);
 		
@@ -85,7 +84,6 @@ public class Test extends JFrame {
 		btnChoice4.setHorizontalAlignment(SwingConstants.LEFT);
 		btnChoice4.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice4.setBounds(15, 692, 795, 81);
-		btnChoice4.setVisible(false);
 		blist.add(btnChoice4);
 		contentPane.add(btnChoice4);
 		
@@ -94,7 +92,6 @@ public class Test extends JFrame {
 		btnChoice5.setHorizontalAlignment(SwingConstants.LEFT);
 		btnChoice5.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		btnChoice5.setBounds(15, 787, 795, 81);
-		btnChoice5.setVisible(false);
 		blist.add(btnChoice5);
 		contentPane.add(btnChoice5);
 		
@@ -181,12 +178,15 @@ public class Test extends JFrame {
 		taStatement.setText(question.getStatement());
 		
 		//Load the button and text for the multiple choices
-		int NumOfChoice=question.getChoices().length;
+		int NumOfChoice=question.getChoices().size();
 		int count=0;
 		while(count!=NumOfChoice) {
 			blist.get(count).setVisible(true);
-			blist.get(count).setText(question.getChoices()[count]);
+			blist.get(count).setText(question.getChoices().get(count));
 			count++;
+		}
+		for(int i=count;i<MAX_CHOICES;i++) {
+			blist.get(i).setVisible(false);
 		}
 	}
 }

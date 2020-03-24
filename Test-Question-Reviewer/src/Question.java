@@ -1,9 +1,10 @@
+import java.util.ArrayList;
 
 public class Question {
 
 	private int Id;
 	private String statement;
-	private String[] choices;
+	private ArrayList<String> choices;
 	private String answer;
 	private boolean correct;
 	
@@ -25,11 +26,11 @@ public class Question {
 		this.statement = statement;
 	}
 	
-	public String[] getChoices() {
+	public ArrayList<String> getChoices() {
 		return choices;
 	}
 
-	public void setChoices(String[] choices) {
+	public void setChoices(ArrayList<String> choices) {
 		this.choices = choices;
 	}
 

@@ -54,10 +54,14 @@ public class Readexcel {
 			question.setAnswer(startAnswer.getStringCellValue());
 			
 			//Set the multiple choices for the question object
-			String[] choices=new String[choiEndColumn-choiStartColumn+1];
-			for(int i=0;i<choices.length;i++) {
+			ArrayList<String> choices=new ArrayList<String>();
+			int numOfChoice=choiEndColumn-choiStartColumn+1;
+			for(int i=0;i<numOfChoice;i++) {
 				Cell nextChoice=sheet.getRow(rowNum).getCell(choiStartColumn+i);
-				choices[i]=nextChoice.toString();
+				String choice=nextChoice.toString();
+				if(!(choice.isEmpty())) {
+					choices.add(choice);
+				}
 			}
 			question.setChoices(choices);
 			
