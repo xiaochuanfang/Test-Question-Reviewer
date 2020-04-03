@@ -49,7 +49,7 @@ public class Result extends JFrame {
 				count++;
 			}
 			else {
-				result=result+"Question "+j+" Answer is "+slist.get(i).getAnswer()+"\n";
+				result=result+"Question "+j+" Answer is "+slist.get(i).getCorrectAns()+"\n";
 				result=result+"You selected "+slist.get(i).getSelectAns()+"\n";
 			}
 		}
@@ -62,6 +62,7 @@ public class Result extends JFrame {
 		Number number=new Number();
 		score=number.roundDecimal(score, 2);
 		
+		//Print the final score
 		result=result+"Your score on this test is "+score;
 		return result;
 	}

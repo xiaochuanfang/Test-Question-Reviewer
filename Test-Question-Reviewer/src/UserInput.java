@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,12 +20,18 @@ import javax.swing.JButton;
 public class UserInput extends JFrame {
 	
 	private JTextArea taID;
+	private JTextArea taType;
 	private JTextArea taStatement;
 	private JTextArea taAnswer;
 	private JTextArea taStartChoice;
 	private JTextArea taEndChoice;
 	private JTextArea taStartRow;
-	private File defaultFile=new File("default.txt");
+
+	private InputChecker check=new InputChecker();
+	private Number number=new Number();
+	
+	private final Font font=new Font("Monospaced", Font.BOLD, 25);
+	private final File defaultFile=new File("default.txt");
 	
 	/**
 	 * Create the frame.
@@ -40,78 +45,91 @@ public class UserInput extends JFrame {
 		
 		//Create text area for ID column input
 		taID = new JTextArea();
-		taID.setFont(new Font("Monospaced", Font.PLAIN, 20));
-		taID.setBounds(62, 110, 117, 44);
+		taID.setFont(font);
+		taID.setBounds(62, 110, 54, 44);
 		contentPane.add(taID);
 		
+		//Create text area for Question Type column input
+		taType = new JTextArea();
+		taType.setFont(font);
+		taType.setBounds(232, 110, 59, 46);
+		contentPane.add(taType);
+				
 		//Create text area for question column input
 		taStatement = new JTextArea();
-		taStatement.setFont(new Font("Monospaced", Font.PLAIN, 20));
-		taStatement.setBounds(282, 110, 117, 44);
+		taStatement.setFont(font);
+		taStatement.setBounds(402, 110, 59, 44);
 		contentPane.add(taStatement);
 		
 		//Create text area for answer column input
 		taAnswer = new JTextArea();
-		taAnswer.setFont(new Font("Monospaced", Font.PLAIN, 20));
-		taAnswer.setBounds(489, 110, 117, 44);
+		taAnswer.setFont(font);
+		taAnswer.setBounds(558, 110, 54, 44);
 		contentPane.add(taAnswer);
 		
 		//Create text area for choice start column input
 		taStartChoice = new JTextArea();
-		taStartChoice.setFont(new Font("Monospaced", Font.PLAIN, 20));
+		taStartChoice.setFont(font);
 		taStartChoice.setBounds(698, 110, 44, 44);
 		contentPane.add(taStartChoice);
 		
 		//Create text area for choice end column input
 		taEndChoice = new JTextArea();
-		taEndChoice.setFont(new Font("Monospaced", Font.PLAIN, 20));
+		taEndChoice.setFont(font);
 		taEndChoice.setBounds(771, 110, 44, 44);
 		contentPane.add(taEndChoice);
 		
 		//Create text area for start row input 
 		taStartRow = new JTextArea();
-		taStartRow.setFont(new Font("Monospaced", Font.PLAIN, 20));
-		taStartRow.setBounds(62, 257, 117, 44);
+		taStartRow.setFont(font);
+		taStartRow.setBounds(62, 257, 54, 44);
 		contentPane.add(taStartRow);
 		
 		//Label for "ID"
 		JLabel lbID = new JLabel("ID");
 		lbID.setHorizontalAlignment(SwingConstants.CENTER);
-		lbID.setFont(new Font("Monospaced", Font.BOLD, 25));
-		lbID.setBounds(62, 54, 117, 37);
+		lbID.setFont(font);
+		lbID.setBounds(62, 54, 54, 37);
 		contentPane.add(lbID);
 		
+		//Label for "Type" 
+		JLabel lbType = new JLabel("Type");
+		lbType.setHorizontalAlignment(SwingConstants.CENTER);
+		lbType.setFont(font);
+		lbType.setBounds(210, 50, 93, 44);
+		contentPane.add(lbType);
+
 		//Label for "Question"
 		JLabel lbStatement = new JLabel("Question");
 		lbStatement.setHorizontalAlignment(SwingConstants.CENTER);
-		lbStatement.setFont(new Font("Monospaced", Font.BOLD, 25));
-		lbStatement.setBounds(264, 54, 146, 37);
+		lbStatement.setFont(font);
+		lbStatement.setBounds(352, 57, 146, 37);
 		contentPane.add(lbStatement);
 		
 		//Label for "Answer"
 		JLabel lbAnswer = new JLabel("Answer");
 		lbAnswer.setHorizontalAlignment(SwingConstants.CENTER);
-		lbAnswer.setFont(new Font("Monospaced", Font.BOLD, 25));
-		lbAnswer.setBounds(489, 54, 117, 37);
+		lbAnswer.setFont(font);
+		lbAnswer.setBounds(533, 57, 117, 37);
 		contentPane.add(lbAnswer);
 		
 		//Label for "Choices"
 		JLabel lbChoices = new JLabel("Choices");
 		lbChoices.setHorizontalAlignment(SwingConstants.CENTER);
-		lbChoices.setFont(new Font("Monospaced", Font.BOLD, 25));
+		lbChoices.setFont(font);
 		lbChoices.setBounds(698, 54, 117, 37);
 		contentPane.add(lbChoices);
 		
 		//Label for "-"
 		JLabel dash = new JLabel("-");
 		dash.setHorizontalAlignment(SwingConstants.CENTER);
-		dash.setFont(new Font("Monospaced", Font.BOLD, 25));
+		dash.setFont(font);
 		dash.setBounds(722, 114, 69, 20);
 		contentPane.add(dash);
 		
 		//Label for "Question Starts At Row"
 		JLabel lbStartAt = new JLabel("Question Starts At Row");
-		lbStartAt.setFont(new Font("Monospaced", Font.BOLD, 25));
+		lbStartAt.setFont(font);
 		lbStartAt.setBounds(62, 213, 342, 37);
 		contentPane.add(lbStartAt);
 		
@@ -120,38 +138,37 @@ public class UserInput extends JFrame {
 		btnStartTest.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				int ID,ques,ans,choi,choi2,startAt;
+				int ID,type,ques,ans,choi,choi2,startAt;
 				
 				//Get the user inputs into string
 				String inputID=taID.getText();
+				String inputType=taType.getText();
 				String inputQues=taStatement.getText();
 				String inputAns=taAnswer.getText();
 				String inputChoi=taStartChoice.getText();
 				String inputChoi2=taEndChoice.getText();
 				String inputStartAt=taStartRow.getText();
 				
-				InputChecker check=new InputChecker();
-				Number number=new Number();
-				
-				//Check if the column inputs for ID, Question, Answer, and Choices are alphabets 
-				if(check.isAlphabet(inputID) && check.isAlphabet(inputQues) && check.isAlphabet(inputAns) 
-						&& check.isAlphabet(inputChoi) && check.isAlphabet(inputChoi2)) {
+				//Check if the column inputs for ID, Type, Question, Answer, and Choices are alphabets 
+				if(check.isAlphabet(inputID) && check.isAlphabet(inputType) && check.isAlphabet(inputQues) 
+						 && check.isAlphabet(inputAns) && check.isAlphabet(inputChoi) && check.isAlphabet(inputChoi2)) {
 					
 					//Check if the question start row input is number  
 					if(check.isPosInt(Integer.parseInt(inputStartAt), true)) {
 						
 						//Save all the inputs in integers
 						ID=number.alphaToInt(inputID, 0);
+						type=number.alphaToInt(inputType, 0);
 						ques=number.alphaToInt(inputQues, 0);
 						ans=number.alphaToInt(inputAns, 0);
 						choi=number.alphaToInt(inputChoi, 0);
 						choi2=number.alphaToInt(inputChoi2, 0);
-						startAt=Integer.parseInt(inputStartAt)-1;
+						startAt=Integer.parseInt(inputStartAt);
 						
 						//Create the Question ArrayList and start a new Test
 						try {
 							Readexcel reader=new Readexcel(file); 
-							ArrayList<Question> qlist=reader.createQuestionList(ID,ques,ans,choi,choi2,startAt);
+							ArrayList<Question> qlist=reader.createQuestionList(ID,type,ques,ans,choi,choi2,startAt);
 							Test test=new Test(qlist);
 							
 							//Save the input values for next time
@@ -180,7 +197,7 @@ public class UserInput extends JFrame {
 		});
 		
 		//Set the "Start test" button attribute
-		btnStartTest.setFont(new Font("Monospaced", Font.BOLD, 25));
+		btnStartTest.setFont(font);
 		btnStartTest.setBounds(489, 257, 197, 44);
 		contentPane.add(btnStartTest);
 		
@@ -195,11 +212,11 @@ public class UserInput extends JFrame {
 		});
 		
 		//Set the "Cancel" button attribute
-		btnCancel.setFont(new Font("Monospaced", Font.BOLD, 25));
+		btnCancel.setFont(font);
 		btnCancel.setBounds(735, 257, 146, 44);
 		contentPane.add(btnCancel);
 
-		//Load last use value
+		//Load last used value
 		try {
 			loadLastValue();
 		} catch (IOException e) {
@@ -214,12 +231,13 @@ public class UserInput extends JFrame {
 		setVisible(true);
 	}
 	
-	//Save user inputs include ID, question, answer, choices and start row for next time
+	//Save user inputs include ID, type, question, answer, choices and start row for next time
 	public void saveDefaultValue() throws IOException {
 		defaultFile.createNewFile();
 		FileWriter fileWriter=new FileWriter(defaultFile);
 		
 		fileWriter.write(taID.getText()+"\n");
+		fileWriter.write(taType.getText()+"\n");
 		fileWriter.write(taStatement.getText()+"\n");
 		fileWriter.write(taAnswer.getText()+"\n");
 		fileWriter.write(taStartChoice.getText()+"\n");
@@ -229,13 +247,14 @@ public class UserInput extends JFrame {
 		fileWriter.close();
 	}
 	
-	//Reload last time user inputs include ID, question, answser, choices and start row
+	//Reload last time user inputs include ID, type, question, answer, choices and start row
 	public void loadLastValue() throws IOException {
 		if(defaultFile.exists()) {
 			FileReader fileReader=new FileReader(defaultFile);
 			Scanner scanner=new Scanner(fileReader);
 			
 			taID.setText(scanner.next());
+			taType.setText(scanner.next());
 			taStatement.setText(scanner.next());
 			taAnswer.setText(scanner.next());
 			taStartChoice.setText(scanner.next());

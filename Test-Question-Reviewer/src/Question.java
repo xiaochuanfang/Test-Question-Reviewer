@@ -1,11 +1,13 @@
 import java.util.ArrayList;
+import java.util.Set;
 
 public class Question {
 
 	private int Id;
+	private String type;
 	private String statement;
 	private ArrayList<String> choices;
-	private String answer;
+	private Set<String> answer;
 	private boolean correct;
 	
 	public Question() {}
@@ -16,6 +18,14 @@ public class Question {
 
 	public void setId(int id) {
 		Id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getStatement() {
@@ -34,11 +44,11 @@ public class Question {
 		this.choices = choices;
 	}
 
-	public String getAnswer() {
+	public Set<String> getAnswer() {
 		return answer;
 	}
 
-	public void setAnswer(String answer) {
+	public void setAnswer(Set<String> answer) {
 		this.answer = answer;
 	}
 

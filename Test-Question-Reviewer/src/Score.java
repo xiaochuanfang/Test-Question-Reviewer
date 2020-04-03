@@ -1,19 +1,20 @@
+import java.util.Set;
 
 public class Score {
 
 	private int Id;
-	private String selectAns;
-	private String answer;
+	private Set<String> selectAns;
+	private Set<String> correctAns;
 	private boolean correct;
 	
 	public Score() {
 		
 	}
 	
-	public Score(int id, String selectAns,String answer) {
+	public Score(int id, Set<String> selectAns,Set<String> correctAns) {
 		Id = id;
 		this.selectAns=selectAns;
-		this.answer=answer;
+		this.correctAns=correctAns;
 	}
 	
 	public int getId() {
@@ -24,20 +25,20 @@ public class Score {
 		Id = id;
 	}
 	
-	public String getSelectAns() {
+	public Set<String> getSelectAns() {
 		return selectAns;
 	}
 
-	public void setSelectAns(String selectAns) {
+	public void setSelectAns(Set<String> selectAns) {
 		this.selectAns = selectAns;
 	}
 	
-	public String getAnswer() {
-		return answer;
+	public Set<String> getCorrectAns() {
+		return correctAns;
 	}
 
-	public void setAnswer(String answer) {
-		this.answer = answer;
+	public void setCorrectAns(Set<String> correctAns) {
+		this.correctAns = correctAns;
 	}
 
 	public boolean isCorrect() {
