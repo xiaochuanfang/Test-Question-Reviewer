@@ -17,7 +17,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Readexcel {
 	
-	private File file;
 	private FileInputStream fi;
 	private HSSFWorkbook wordbook;
 	private HSSFSheet sheet;
@@ -28,7 +27,6 @@ public class Readexcel {
 	public Readexcel(File file) throws IOException {
 		
 		//Read excel file at sheet 0
-		this.file=file;
 		fi=new FileInputStream(file);
 		wordbook=new HSSFWorkbook(fi);
 		sheet=wordbook.getSheetAt(0);

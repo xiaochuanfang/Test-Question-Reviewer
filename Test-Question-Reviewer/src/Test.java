@@ -1,4 +1,5 @@
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
@@ -13,6 +14,7 @@ import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
+import javax.swing.JTable;
 
 public class Test extends JFrame {
 
@@ -25,7 +27,8 @@ public class Test extends JFrame {
 	private JButton btnChoice4;
 	private JButton btnChoice5;
 	private JButton btnSubmit;
-
+	private JTable table;
+	
 	private ArrayList<JButton> blist;
 	private ArrayList<Question> qlist;
 	private ArrayList<Score> slist;
@@ -34,7 +37,9 @@ public class Test extends JFrame {
 	private ActionListener singleAnsListener;
 	private ActionListener multiAnsListener;
 	private boolean resetMode;
-
+	
+	private ScoreTableModel scoreModel;
+	
 	private final Font font=new Font("Monospaced", Font.PLAIN, 25);
 	private final Color selectColor=Color.GREEN;
 	private final int MAX_CHOICES=5;
@@ -47,10 +52,18 @@ public class Test extends JFrame {
 		//Initialized question number,button list, score list, question list and resetMode
 		qNumber=0;
 		blist=new ArrayList<JButton>();
-		slist=new ArrayList<Score>();
 		this.qlist=qlist;
 		resetMode=true;
 
+		//
+		slist=new ArrayList<Score>();
+		for(int i=0;i<qlist.size();i++) {
+			Score score=new Score();
+			String id=Integer.toString(qlist.get(i).getId());
+			score.setId(id);
+			slist.add(score);
+		}
+		
 		//Create action listener for the button in single answer mode
 		singleAnsListener=new ActionListener() {
 
@@ -169,7 +182,27 @@ public class Test extends JFrame {
 		});
 		
 		contentPane.add(btnSubmit);
+		
+		//Create a table to show progress of the test
+		table = new JTable();
+		
+		//Create a score table model to set the layout for the table
+		scoreModel=new ScoreTableModel();
+		table.setModel(scoreModel);
 
+		//Create a renderer to show scores during the test
+		ScoreCellRenderer renderer=new ScoreCellRenderer();
+		table.setDefaultRenderer(Object.class, renderer);
+
+		//Add Scorelist Object to the score table model
+		addScorelistToModel();		
+		
+		//Set table attributes
+		table.setRowHeight(30);
+		table.setBounds(825, 16, 668, 354);
+		table.setFont(font);
+		contentPane.add(table);
+		
 		//Set frame operation and position
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1530, 932);
@@ -180,21 +213,62 @@ public class Test extends JFrame {
 		loadQuestion();
 	}
 
-	public ArrayList<Score> recordScore(Set<String> selectAns){
-
-		//Create the score
-		Set<String> correctAns=qlist.get(qNumber).getAnswer();
-		Score score=new Score(qNumber,selectAns,correctAns);
+	public void addScorelistToModel() {
 		
-		//Set the score to be true or false
+		int totalScore=slist.size();
+		int maxListSize=10;
+		int totalFullRow=totalScore/maxListSize;
+		int remainScore=totalScore%maxListSize;
+		int currentScore=0;		
+
+		//Create Scorelist Object with full size and add to score table model
+		for(int i=0;i<totalFullRow;i++) {
+			Scorelist sublist=new Scorelist();
+			for(int j=0;j<maxListSize;j++) {
+				Score score=slist.get(currentScore);
+				sublist.addScore(score);
+				currentScore++;
+			}
+			scoreModel.addScorelist(sublist);
+		}
+
+		//Create scorelist that adds the remaining score
+		Scorelist sublist=new Scorelist();
+		for(int i=0;i<remainScore;i++) {
+			Score score=slist.get(currentScore);
+			sublist.addScore(score);
+			currentScore++;
+		}
+		
+		//Add empty score to the last socrelist to make it full
+		int remainSize=maxListSize-remainScore;
+		for(int i=0;i<=remainSize;i++) {
+			Score score=new Score();
+			sublist.addScore(score);
+		}
+		
+		//Add the last socrelist to the score table model
+		scoreModel.addScorelist(sublist);
+	}
+	
+	public void recordScore(Set<String> selectAns){
+
+		//Find the score with the question ID
+		Score score=slist.get(qNumber);
+		
+		//Set the Score object's select answer and correct answer
+		Set<String> correctAns=qlist.get(qNumber).getAnswer();
+		score.setSelectAns(selectAns);
+		score.setCorrectAns(correctAns);
+
+		//Set the Score object's correctness
 		if(checkAnswer(selectAns)) {
 			score.setCorrect(true);
 		}
 		else {
 			score.setCorrect(false);
 		}
-		slist.add(score);	//Add to score list
-		return slist;
+		showCellColor();
 	}
 
 	public boolean checkAnswer(Set<String> selectAnswer) {
@@ -297,5 +371,11 @@ public class Test extends JFrame {
 		btnChoice3.removeActionListener(listener);
 		btnChoice4.removeActionListener(listener);
 		btnChoice5.removeActionListener(listener);
+	}
+	
+	//Fix the issue that renderer is not showing color unless deselect the row  
+	public void showCellColor() {
+		table.selectAll();
+		table.clearSelection();
 	}
 }

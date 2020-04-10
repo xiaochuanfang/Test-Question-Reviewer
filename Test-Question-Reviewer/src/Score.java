@@ -2,26 +2,27 @@ import java.util.Set;
 
 public class Score {
 
-	private int Id;
+	private String Id;
 	private Set<String> selectAns;
 	private Set<String> correctAns;
-	private boolean correct;
+	private Boolean correct;
 	
 	public Score() {
-		
+		Id=null;
+		correct=null;
 	}
 	
-	public Score(int id, Set<String> selectAns,Set<String> correctAns) {
+	public Score(String id, Set<String> selectAns,Set<String> correctAns) {
 		Id = id;
 		this.selectAns=selectAns;
 		this.correctAns=correctAns;
 	}
 	
-	public int getId() {
+	public String getId() {
 		return Id;
 	}
 	
-	public void setId(int id) {
+	public void setId(String id) {
 		Id = id;
 	}
 	
@@ -41,11 +42,11 @@ public class Score {
 		this.correctAns = correctAns;
 	}
 
-	public boolean isCorrect() {
+	public Boolean isCorrect() {
 		return correct;
 	}
 	
-	public void setCorrect(boolean correct) {
+	public void setCorrect(Boolean correct) {
 		this.correct = correct;
 	}
 }
