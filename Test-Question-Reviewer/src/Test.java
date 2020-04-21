@@ -28,7 +28,7 @@ public class Test extends JFrame {
 	private JButton btnChoice5;
 	private JButton btnSubmit;
 	private JTable table;
-	
+
 	private ArrayList<JButton> blist;
 	private ArrayList<Question> qlist;
 	private int qNumber;
@@ -36,9 +36,9 @@ public class Test extends JFrame {
 	private ActionListener singleAnsListener;
 	private ActionListener multiAnsListener;
 	private boolean resetMode;
-	
+
 	private QuestionTableModel questionModel;
-	
+
 	private final Font font=new Font("Monospaced", Font.PLAIN, 25);
 	private final Color selectColor=Color.GREEN;
 	private final int MAX_CHOICES=5;
@@ -64,7 +64,7 @@ public class Test extends JFrame {
 				JButton button=(JButton) event.getSource();
 				Set<String> selectAns=new HashSet<String>();
 				selectAns.add(button.getName());
-				
+
 				//Record the score after user push the choice button and go to next question
 				recordScore(selectAns);
 				gotoNextQuestion();
@@ -152,11 +152,11 @@ public class Test extends JFrame {
 		btnSubmit = new JButton("Submit");
 		btnSubmit.setBounds(825, 401, 184, 81);
 		btnSubmit.setFont(font);
-		
+
 		//Add action listener for submit button
 		btnSubmit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				//Get the list of choices that user select
 				Set<String> selectAnswers=new HashSet<String>();
 				for(int i=0;i<blist.size();i++) {
@@ -164,18 +164,18 @@ public class Test extends JFrame {
 						selectAnswers.add(blist.get(i).getName());
 					}
 				}
-				
+
 				//Record the score after user push the choice button and go to next question
 				recordScore(selectAnswers);
 				gotoNextQuestion();
 			}
 		});
-		
+
 		contentPane.add(btnSubmit);
-		
+
 		//Create a table to show progress of the test
 		table = new JTable();
-		
+
 		//Create a Question table model to set the layout for the table
 		questionModel=new QuestionTableModel();
 		table.setModel(questionModel);
@@ -186,13 +186,18 @@ public class Test extends JFrame {
 
 		//Add Questionlist Object to the Question table model
 		addQuestionlistToModel();		
-		
+
 		//Set table attributes
 		table.setRowHeight(30);
-		table.setBounds(825, 16, 668, 354);
 		table.setFont(font);
-		contentPane.add(table);
+		table.setTableHeader(null);
+		table.setCellSelectionEnabled(false);
 		
+		//Create scroll pane for table
+		JScrollPane tableScrollPane=new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		tableScrollPane.setBounds(825, 16, 668, 354);
+		contentPane.add(tableScrollPane);
+
 		//Set frame operation and position
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1530, 932);
@@ -205,7 +210,7 @@ public class Test extends JFrame {
 	}
 
 	public void addQuestionlistToModel() {
-		
+
 		int totalQ=qlist.size();
 		int maxListSize=10;
 		int totalFullRow=totalQ/maxListSize;
@@ -230,23 +235,23 @@ public class Test extends JFrame {
 			sublist.addQuestion(question);
 			currentQID++;
 		}
-		
+
 		//Add empty Question to the last Question list to make it full
 		int remainSize=maxListSize-remainQ;
 		for(int i=0;i<=remainSize;i++) {
 			Question question=new Question();
 			sublist.addQuestion(question);
 		}
-		
+
 		//Add the last Question list to the Question table model
 		questionModel.addQuestionList(sublist);
 	}
-	
+
 	public void recordScore(Set<String> selectAns){
 
 		//Find the question with the question ID
 		Question question=qlist.get(qNumber);
-		
+
 		//Set the Question object's select answer and correct answer
 		Set<String> correctAns=qlist.get(qNumber).getCorrectAns();
 		question.setSelectAns(selectAns);
@@ -259,7 +264,7 @@ public class Test extends JFrame {
 		else {
 			question.setCorrect(false);
 		}
-		
+
 		//Update the table cell color in response to user's answer
 		showCellColor();
 	}
@@ -272,7 +277,7 @@ public class Test extends JFrame {
 	}
 
 	public void gotoNextQuestion() {
-		
+
 		qNumber++;			//Increment the question number
 
 		//If didn't finish last question in question list, load another question
@@ -285,7 +290,7 @@ public class Test extends JFrame {
 			Score score=new Score(this,qlist);				
 		}
 	}
-	
+
 	public void loadQuestion() {
 
 		//Get current question number
@@ -336,7 +341,7 @@ public class Test extends JFrame {
 			}
 		}
 	}
-	
+
 	//Change action listeners for all the buttons for single answer mode
 	public void setupSingleAnsMode() {
 		btnChoice1.addActionListener(singleAnsListener);
@@ -365,7 +370,7 @@ public class Test extends JFrame {
 		btnChoice4.removeActionListener(listener);
 		btnChoice5.removeActionListener(listener);
 	}
-	
+
 	//Fix the issue that renderer is not showing color unless deselect the row  
 	public void showCellColor() {
 		table.selectAll();
