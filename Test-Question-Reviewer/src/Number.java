@@ -10,10 +10,12 @@ public class Number {
 		return instance.doubleValue();
 	}
 	
-	//Convert the alphabet into number which match 'A' to start number
-	public int alphaToInt(String alpha, int start) {
+	/*Convert the alphabet into number where the 
+	 * first letter 'A' matches to parameter 'start'
+	 */
+	public int alphaToInt(String alpha, int startAWith) {
 		int value=0;
-		int shiftValue=-10+start;
+		int shiftValue=-10+startAWith;
 		
 		for(int i=0;i<alpha.length();i++) {
 			char c=alpha.charAt(i);
@@ -21,4 +23,19 @@ public class Number {
 		}
 		return value;
 	}
+	
+	/*Convert the number into alphabet where the 
+	 * first letter 'A' match to parameter 'start'
+	 */
+	public String intToAlpha(int num, int startAWith) {
+		if(num<startAWith) {
+			System.out.println("Error: your number is smaller than the start point");
+			System.exit(1);
+		}
+		int shiftValue=65-startAWith;
+		
+		String a=String.valueOf((char) (num+shiftValue));
+		return a;
+	}
+	
 }

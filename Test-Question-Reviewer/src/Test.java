@@ -31,14 +31,13 @@ public class Test extends JFrame {
 	
 	private ArrayList<JButton> blist;
 	private ArrayList<Question> qlist;
-	private ArrayList<Score> slist;
 	private int qNumber;
 
 	private ActionListener singleAnsListener;
 	private ActionListener multiAnsListener;
 	private boolean resetMode;
 	
-	private ScoreTableModel scoreModel;
+	private QuestionTableModel questionModel;
 	
 	private final Font font=new Font("Monospaced", Font.PLAIN, 25);
 	private final Color selectColor=Color.GREEN;
@@ -49,21 +48,12 @@ public class Test extends JFrame {
 	 */
 	public Test(ArrayList<Question> qlist) {
 
-		//Initialized question number,button list, score list, question list and resetMode
+		//Initialized question number,button list, question list and resetMode
 		qNumber=0;
 		blist=new ArrayList<JButton>();
 		this.qlist=qlist;
 		resetMode=true;
 
-		//
-		slist=new ArrayList<Score>();
-		for(int i=0;i<qlist.size();i++) {
-			Score score=new Score();
-			String id=Integer.toString(qlist.get(i).getId());
-			score.setId(id);
-			slist.add(score);
-		}
-		
 		//Create action listener for the button in single answer mode
 		singleAnsListener=new ActionListener() {
 
@@ -186,16 +176,16 @@ public class Test extends JFrame {
 		//Create a table to show progress of the test
 		table = new JTable();
 		
-		//Create a score table model to set the layout for the table
-		scoreModel=new ScoreTableModel();
-		table.setModel(scoreModel);
+		//Create a Question table model to set the layout for the table
+		questionModel=new QuestionTableModel();
+		table.setModel(questionModel);
 
-		//Create a renderer to show scores during the test
-		ScoreCellRenderer renderer=new ScoreCellRenderer();
+		//Create a renderer to show question correctness during the test
+		QuestionCellRenderer renderer=new QuestionCellRenderer();
 		table.setDefaultRenderer(Object.class, renderer);
 
-		//Add Scorelist Object to the score table model
-		addScorelistToModel();		
+		//Add Questionlist Object to the Question table model
+		addQuestionlistToModel();		
 		
 		//Set table attributes
 		table.setRowHeight(30);
@@ -207,74 +197,77 @@ public class Test extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1530, 932);
 		setContentPane(contentPane);
+		setLocationRelativeTo(null);
 		setVisible(true);
 
 		//Load text for the text areas and buttons
 		loadQuestion();
 	}
 
-	public void addScorelistToModel() {
+	public void addQuestionlistToModel() {
 		
-		int totalScore=slist.size();
+		int totalQ=qlist.size();
 		int maxListSize=10;
-		int totalFullRow=totalScore/maxListSize;
-		int remainScore=totalScore%maxListSize;
-		int currentScore=0;		
+		int totalFullRow=totalQ/maxListSize;
+		int remainQ=totalQ%maxListSize;
+		int currentQID=0;		
 
-		//Create Scorelist Object with full size and add to score table model
+		//Create Question list Object with full size and add to Question table model
 		for(int i=0;i<totalFullRow;i++) {
-			Scorelist sublist=new Scorelist();
+			QuestionList sublist=new QuestionList();
 			for(int j=0;j<maxListSize;j++) {
-				Score score=slist.get(currentScore);
-				sublist.addScore(score);
-				currentScore++;
+				Question question=qlist.get(currentQID);
+				sublist.addQuestion(question);
+				currentQID++;
 			}
-			scoreModel.addScorelist(sublist);
+			questionModel.addQuestionList(sublist);
 		}
 
-		//Create scorelist that adds the remaining score
-		Scorelist sublist=new Scorelist();
-		for(int i=0;i<remainScore;i++) {
-			Score score=slist.get(currentScore);
-			sublist.addScore(score);
-			currentScore++;
+		//Create Question list that adds the remaining Question
+		QuestionList sublist=new QuestionList();
+		for(int i=0;i<remainQ;i++) {
+			Question question=qlist.get(currentQID);
+			sublist.addQuestion(question);
+			currentQID++;
 		}
 		
-		//Add empty score to the last socrelist to make it full
-		int remainSize=maxListSize-remainScore;
+		//Add empty Question to the last Question list to make it full
+		int remainSize=maxListSize-remainQ;
 		for(int i=0;i<=remainSize;i++) {
-			Score score=new Score();
-			sublist.addScore(score);
+			Question question=new Question();
+			sublist.addQuestion(question);
 		}
 		
-		//Add the last socrelist to the score table model
-		scoreModel.addScorelist(sublist);
+		//Add the last Question list to the Question table model
+		questionModel.addQuestionList(sublist);
 	}
 	
 	public void recordScore(Set<String> selectAns){
 
-		//Find the score with the question ID
-		Score score=slist.get(qNumber);
+		//Find the question with the question ID
+		Question question=qlist.get(qNumber);
 		
-		//Set the Score object's select answer and correct answer
-		Set<String> correctAns=qlist.get(qNumber).getAnswer();
-		score.setSelectAns(selectAns);
-		score.setCorrectAns(correctAns);
+		//Set the Question object's select answer and correct answer
+		Set<String> correctAns=qlist.get(qNumber).getCorrectAns();
+		question.setSelectAns(selectAns);
+		question.setCorrectAns(correctAns);
 
-		//Set the Score object's correctness
+		//Set the Question object's correctness
 		if(checkAnswer(selectAns)) {
-			score.setCorrect(true);
+			question.setCorrect(true);
 		}
 		else {
-			score.setCorrect(false);
+			question.setCorrect(false);
 		}
+		
+		//Update the table cell color in response to user's answer
 		showCellColor();
 	}
 
 	public boolean checkAnswer(Set<String> selectAnswer) {
 
 		//Check if user had chose the correct answer
-		Set<String> correctAnswer=qlist.get(qNumber).getAnswer();
+		Set<String> correctAnswer=qlist.get(qNumber).getCorrectAns();
 		return selectAnswer.equals(correctAnswer);
 	}
 
@@ -288,8 +281,8 @@ public class Test extends JFrame {
 		}
 		//Otherwise print the test result
 		else {
-			Result result=new Result(slist);
-			dispose();				
+			//Review result=new Review(qlist);
+			Score score=new Score(this,qlist);				
 		}
 	}
 	
@@ -364,7 +357,7 @@ public class Test extends JFrame {
 		btnSubmit.setVisible(true);
 	}
 
-	//Remove all the actionlisteners for the buttons for choices
+	//Remove all the action listeners for the buttons for choices
 	public void removeAllActionListener(ActionListener listener) {
 		btnChoice1.removeActionListener(listener);
 		btnChoice2.removeActionListener(listener);

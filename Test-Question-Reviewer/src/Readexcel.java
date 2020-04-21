@@ -66,7 +66,7 @@ public class Readexcel {
 			Cell answer=sheet.getRow(rowNum).getCell(ansColumn);
 			
 			//Set the Question object's id, question
-			question.setId((int)id.getNumericCellValue());
+			question.setId(Integer.toString((int)id.getNumericCellValue()));
 			question.setStatement(statement.getStringCellValue());
 			
 			//Set the Question object's type
@@ -93,7 +93,7 @@ public class Readexcel {
 			for(int i=0;i<qAnswer.length();i++) {
 				answers.add(qAnswer.substring(i, i+1));
 			}
-			question.setAnswer(answers);
+			question.setCorrectAns(answers);
 			
 			//Set the Question object's multiple choices
 			ArrayList<String> choices=new ArrayList<String>();

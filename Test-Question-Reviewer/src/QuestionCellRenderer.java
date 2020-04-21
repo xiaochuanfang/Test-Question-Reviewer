@@ -4,17 +4,18 @@ import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-public class ScoreCellRenderer extends DefaultTableCellRenderer {
+public class QuestionCellRenderer extends DefaultTableCellRenderer {
 
 	public Component getTableCellRendererComponent(
 			JTable table, Object value, boolean isSelected,
 			boolean hasFocus, int row, int column)
 	{
-		ScoreTableModel stm=(ScoreTableModel) table.getModel();
-		Scorelist scorelist=(Scorelist) stm.getValueAtRow(row);
-		Score score=scorelist.getScore(column);
-		String id=score.getId();
-		Boolean correct=score.isCorrect();
+		QuestionTableModel qtm=(QuestionTableModel) table.getModel();
+		QuestionList questionList=(QuestionList) qtm.getValueAtRow(row);
+		Question question=questionList.getQuestion(column);
+		String id=question.getId();
+		Boolean correct=question.isCorrect();
+		
 		if(id==null) {
 			setBackground(Color.white);
 		}

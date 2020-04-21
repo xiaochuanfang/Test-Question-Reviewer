@@ -3,20 +3,21 @@ import java.util.Set;
 
 public class Question {
 
-	private int Id;
+	private String Id;
 	private String type;
 	private String statement;
 	private ArrayList<String> choices;
-	private Set<String> answer;
-	private boolean correct;
+	private Set<String> correctAns;
+	private Set<String> selectAns;
+	private Boolean correct;
 	
 	public Question() {}
 	
-	public int getId() {
+	public String getId() {
 		return Id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		Id = id;
 	}
 
@@ -44,19 +45,27 @@ public class Question {
 		this.choices = choices;
 	}
 
-	public Set<String> getAnswer() {
-		return answer;
+	public Set<String> getCorrectAns() {
+		return correctAns;
 	}
 
-	public void setAnswer(Set<String> answer) {
-		this.answer = answer;
+	public void setCorrectAns(Set<String> answer) {
+		this.correctAns = answer;
+	}
+	
+	public Set<String> getSelectAns() {
+		return selectAns;
 	}
 
-	public boolean isCorrect() {
+	public void setSelectAns(Set<String> selectAns) {
+		this.selectAns = selectAns;
+	}
+
+	public Boolean isCorrect() {
 		return correct;
 	}
 
-	public void setCorrect(boolean correct) {
+	public void setCorrect(Boolean correct) {
 		this.correct = correct;
 	}
 }
