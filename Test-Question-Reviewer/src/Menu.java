@@ -1,29 +1,26 @@
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 
 public class Menu extends JFrame {
 
+	private final Font font=new Font("Monospaced", Font.PLAIN, 30);
+	
 	//Launch the application
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					Menu frame = new Menu();
-					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -34,21 +31,17 @@ public class Menu extends JFrame {
 	//Create the frame
 	public Menu() {
 		
-		//Set frame operation and bound
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 967, 568);
-		
 		//Create the contentPane
 		JPanel contentPane= new JPanel();
-		
-		//Set the contentPane bound and layout
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		
-		//Create "New Test" button to start a test
+		//Create button to start a test
 		JButton btnNewTest = new JButton("New Test");
+		btnNewTest.setFont(font);
+		btnNewTest.setBounds(145, 349, 251, 86);
+		contentPane.add(btnNewTest);
 		
-		//Set action listener for the "New Test" button
+		//Add action listener for the "New Test" button
 		btnNewTest.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -72,34 +65,31 @@ public class Menu extends JFrame {
 				if(returnVal == JFileChooser.APPROVE_OPTION) {
 					File file=chooser.getSelectedFile();
 					
-					//Create the Question ArrayList and start a new Test
+					//Create UserInput dialog for user to enter additional information
 					UserInput userInput=new UserInput(file);
 					dispose();
 				}
 			}
 		});
 		
-		//Set font and bound for the "New Test" button
-		btnNewTest.setFont(new Font("Tahoma", Font.PLAIN, 28));
-		btnNewTest.setBounds(145, 349, 251, 86);
-		
-		//Create "Exit" button to exit the program
+		//Create button to exit the program
 		JButton btnExit = new JButton("Exit");
+		btnExit.setFont(font);
+		btnExit.setBounds(527, 349, 256, 86);
+		contentPane.add(btnExit);
 		
-		//Set action listener for the "Exit" button
+		//Add action listener for the "Exit" button
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				System.exit(0);
 			}
 		});
 		
-		//Set font and bound for the "New Test" button
-		btnExit.setFont(new Font("Tahoma", Font.PLAIN, 28));
-		btnExit.setBounds(527, 349, 256, 86);
-		
-		//Add contentPane, "New Test" button and "Exit" button to the frame
+		//Set frame operation and position
+		setBounds(100, 100, 967, 568);
 		setContentPane(contentPane);
-		contentPane.add(btnNewTest);
-		contentPane.add(btnExit);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 }
