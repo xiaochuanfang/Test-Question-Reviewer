@@ -1,4 +1,3 @@
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextArea;
@@ -16,15 +15,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 
-public class UserInput extends JFrame {
+public class UserInput extends JDialog {
 	
-	private JTextArea taID;
-	private JTextArea taType;
 	private JTextArea taStatement;
-	private JTextArea taAnswer;
 	private JTextArea taStartChoice;
 	private JTextArea taEndChoice;
+	private JTextArea taAnswer;
+	private JTextArea taType;
 	private JTextArea taStartRow;
 
 	private InputChecker check=new InputChecker();
@@ -43,94 +42,81 @@ public class UserInput extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		
-		//Create text area for ID column input
-		taID = new JTextArea();
-		taID.setFont(font);
-		taID.setBounds(62, 110, 54, 44);
-		contentPane.add(taID);
-		
 		//Create text area for Question Type column input
 		taType = new JTextArea();
 		taType.setFont(font);
-		taType.setBounds(232, 110, 59, 46);
+		taType.setBounds(748, 110, 59, 46);
 		contentPane.add(taType);
 				
 		//Create text area for question column input
 		taStatement = new JTextArea();
 		taStatement.setFont(font);
-		taStatement.setBounds(402, 110, 59, 44);
+		taStatement.setBounds(111, 110, 59, 44);
 		contentPane.add(taStatement);
 		
 		//Create text area for answer column input
 		taAnswer = new JTextArea();
 		taAnswer.setFont(font);
-		taAnswer.setBounds(558, 110, 54, 44);
+		taAnswer.setBounds(555, 110, 54, 44);
 		contentPane.add(taAnswer);
 		
 		//Create text area for choice start column input
 		taStartChoice = new JTextArea();
 		taStartChoice.setFont(font);
-		taStartChoice.setBounds(698, 110, 44, 44);
+		taStartChoice.setBounds(310, 110, 44, 44);
 		contentPane.add(taStartChoice);
 		
 		//Create text area for choice end column input
 		taEndChoice = new JTextArea();
 		taEndChoice.setFont(font);
-		taEndChoice.setBounds(771, 110, 44, 44);
+		taEndChoice.setBounds(389, 110, 44, 44);
 		contentPane.add(taEndChoice);
 		
 		//Create text area for start row input 
 		taStartRow = new JTextArea();
 		taStartRow.setFont(font);
-		taStartRow.setBounds(62, 257, 54, 44);
+		taStartRow.setBounds(116, 257, 54, 44);
 		contentPane.add(taStartRow);
-		
-		//Label for "ID"
-		JLabel lbID = new JLabel("ID");
-		lbID.setHorizontalAlignment(SwingConstants.CENTER);
-		lbID.setFont(font);
-		lbID.setBounds(62, 54, 54, 37);
-		contentPane.add(lbID);
 		
 		//Label for "Type" 
 		JLabel lbType = new JLabel("Type");
 		lbType.setHorizontalAlignment(SwingConstants.CENTER);
 		lbType.setFont(font);
-		lbType.setBounds(210, 50, 93, 44);
+		lbType.setBounds(730, 50, 93, 44);
 		contentPane.add(lbType);
 
 		//Label for "Question"
 		JLabel lbStatement = new JLabel("Question");
 		lbStatement.setHorizontalAlignment(SwingConstants.CENTER);
 		lbStatement.setFont(font);
-		lbStatement.setBounds(352, 57, 146, 37);
+		lbStatement.setBounds(67, 54, 146, 37);
 		contentPane.add(lbStatement);
 		
 		//Label for "Answer"
 		JLabel lbAnswer = new JLabel("Answer");
 		lbAnswer.setHorizontalAlignment(SwingConstants.CENTER);
 		lbAnswer.setFont(font);
-		lbAnswer.setBounds(533, 57, 117, 37);
+		lbAnswer.setBounds(528, 54, 117, 37);
 		contentPane.add(lbAnswer);
 		
 		//Label for "Choices"
 		JLabel lbChoices = new JLabel("Choices");
 		lbChoices.setHorizontalAlignment(SwingConstants.CENTER);
 		lbChoices.setFont(font);
-		lbChoices.setBounds(698, 54, 117, 37);
+		lbChoices.setBounds(310, 54, 117, 37);
 		contentPane.add(lbChoices);
 		
 		//Label for "-"
 		JLabel dash = new JLabel("-");
 		dash.setHorizontalAlignment(SwingConstants.CENTER);
 		dash.setFont(font);
-		dash.setBounds(722, 114, 69, 20);
+		dash.setBounds(338, 119, 69, 20);
 		contentPane.add(dash);
 		
 		//Label for "Question Starts At Row"
-		JLabel lbStartAt = new JLabel("Question Starts At Row");
+		JLabel lbStartAt = new JLabel("Question Start Row");
 		lbStartAt.setFont(font);
-		lbStartAt.setBounds(62, 213, 342, 37);
+		lbStartAt.setBounds(15, 204, 270, 37);
 		contentPane.add(lbStartAt);
 		
 		//Button to start the test
@@ -138,10 +124,9 @@ public class UserInput extends JFrame {
 		btnStartTest.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				int ID,type,ques,ans,choi,choi2,startAt;
+				int type,ques,ans,choi,choi2,startAt;
 				
 				//Get the user inputs into string
-				String inputID=taID.getText();
 				String inputType=taType.getText();
 				String inputQues=taStatement.getText();
 				String inputAns=taAnswer.getText();
@@ -150,14 +135,13 @@ public class UserInput extends JFrame {
 				String inputStartAt=taStartRow.getText();
 				
 				//Check if the column inputs for ID, Type, Question, Answer, and Choices are alphabets 
-				if(check.isAlphabet(inputID) && check.isAlphabet(inputType) && check.isAlphabet(inputQues) 
-						 && check.isAlphabet(inputAns) && check.isAlphabet(inputChoi) && check.isAlphabet(inputChoi2)) {
+				if(check.isAlphabet(inputType) && check.isAlphabet(inputQues) && check.isAlphabet(inputAns) 
+						&& check.isAlphabet(inputChoi) && check.isAlphabet(inputChoi2)) {
 					
 					//Check if the question start row input is number  
 					if(check.isPosInt(Integer.parseInt(inputStartAt), true)) {
 						
 						//Save all the inputs in integers
-						ID=number.alphaToInt(inputID, 0);
 						type=number.alphaToInt(inputType, 0);
 						ques=number.alphaToInt(inputQues, 0);
 						ans=number.alphaToInt(inputAns, 0);
@@ -165,16 +149,19 @@ public class UserInput extends JFrame {
 						choi2=number.alphaToInt(inputChoi2, 0);
 						startAt=Integer.parseInt(inputStartAt);
 						
-						//Create the Question ArrayList and start a new Test
 						try {
+							//Create the Question ArrayList
 							Readexcel reader=new Readexcel(file); 
-							ArrayList<Question> qlist=reader.createQuestionList(ID,type,ques,ans,choi,choi2,startAt);
-							Test test=new Test(qlist);
+							ArrayList<Question> qlist=reader.createQuestionList(type,ques,ans,choi,choi2,startAt);
+							
+							//Show dialog for user to choose test mode
+							TestMode mode=new TestMode(qlist);
 							
 							//Save the input values for next time
 							saveDefaultValue();
 							
 							dispose();
+							
 						} catch (IOException exception) {
 							exception.printStackTrace();
 						}
@@ -198,36 +185,21 @@ public class UserInput extends JFrame {
 		
 		//Set the "Start test" button attribute
 		btnStartTest.setFont(font);
-		btnStartTest.setBounds(489, 257, 197, 44);
+		btnStartTest.setBounds(626, 254, 197, 44);
 		contentPane.add(btnStartTest);
-		
-		//Button for cancel the test
-		JButton btnCancel = new JButton("Cancel");
-		
-		//Set action listener for the "Cancel" button
-		btnCancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				System.exit(0);
-			}
-		});
-		
-		//Set the "Cancel" button attribute
-		btnCancel.setFont(font);
-		btnCancel.setBounds(735, 257, 146, 44);
-		contentPane.add(btnCancel);
 
 		//Load last used value
 		try {
 			loadLastValue();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		//Set frame operation and position
-		setContentPane(contentPane);		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 929, 450);
+		setContentPane(contentPane);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 	
@@ -236,7 +208,6 @@ public class UserInput extends JFrame {
 		defaultFile.createNewFile();
 		FileWriter fileWriter=new FileWriter(defaultFile);
 		
-		fileWriter.write(taID.getText()+"\n");
 		fileWriter.write(taType.getText()+"\n");
 		fileWriter.write(taStatement.getText()+"\n");
 		fileWriter.write(taAnswer.getText()+"\n");
@@ -253,7 +224,6 @@ public class UserInput extends JFrame {
 			FileReader fileReader=new FileReader(defaultFile);
 			Scanner scanner=new Scanner(fileReader);
 			
-			taID.setText(scanner.next());
 			taType.setText(scanner.next());
 			taStatement.setText(scanner.next());
 			taAnswer.setText(scanner.next());

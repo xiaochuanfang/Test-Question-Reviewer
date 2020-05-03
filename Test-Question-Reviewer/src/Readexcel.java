@@ -32,10 +32,11 @@ public class Readexcel {
 		sheet=wordbook.getSheetAt(0);
 	}
 	
-	public ArrayList<Question> createQuestionList(int idColumn, int typeColumn, int quesColumn, int ansColumn, int choiStartColumn, int choiEndColumn, int startRow) throws IOException {
+	public ArrayList<Question> createQuestionList(int typeColumn, int quesColumn, int ansColumn, int choiStartColumn, int choiEndColumn, int startRow) throws IOException {
 
 		//ArrayList to store list of Question object
 		ArrayList<Question> qList=new ArrayList<Question>();
+		int currentQID=0;
 		
 		//Add all possible input values for single answer type set
 		Set<String> singleAnsType=new HashSet<String>();
@@ -56,17 +57,18 @@ public class Readexcel {
 		//Read current row until the last row
 		while(rowNum<=lastRow) {
 			
+			currentQID++;
+			
 			//Create a Question object
 			Question question=new Question();
 			
-			//Get the cell of id, type, question and answer for current row
-			Cell id=sheet.getRow(rowNum).getCell(idColumn);
+			//Get the cell for type, question and answer for current row
 			Cell type=sheet.getRow(rowNum).getCell(typeColumn);
 			Cell statement=sheet.getRow(rowNum).getCell(quesColumn);
 			Cell answer=sheet.getRow(rowNum).getCell(ansColumn);
 			
 			//Set the Question object's id, question
-			question.setId(Integer.toString((int)id.getNumericCellValue()));
+			question.setId(Integer.toString(currentQID));
 			question.setStatement(statement.getStringCellValue());
 			
 			//Set the Question object's type

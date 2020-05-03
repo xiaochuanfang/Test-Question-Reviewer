@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -31,14 +32,17 @@ public class Test extends JFrame {
 
 	private ArrayList<JButton> blist;
 	private ArrayList<Question> qlist;
-	private int qNumber;
+	private Question[] qArray;
+	private int position;
 
 	private ActionListener singleAnsListener;
 	private ActionListener multiAnsListener;
 	private boolean resetMode;
+	private Boolean randomMode;
 
 	private QuestionTableModel questionModel;
-
+	private Random random=new Random();
+	
 	private final Font font=new Font("Monospaced", Font.PLAIN, 25);
 	private final Color selectColor=Color.GREEN;
 	private final int MAX_CHOICES=5;
@@ -46,13 +50,17 @@ public class Test extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Test(ArrayList<Question> qlist) {
+	public Test(ArrayList<Question> q, Boolean randomMode) {
 
-		//Initialized question number,button list, question list and resetMode
-		qNumber=0;
-		blist=new ArrayList<JButton>();
-		this.qlist=qlist;
-		resetMode=true;
+		//Initialized fields
+		blist=new ArrayList<JButton>();					//List of all multiple choices buttons in this GUI
+		qlist=q;										//List of unanswer Question Object
+		qArray=new Question[qlist.size()];				//List of answered Question Object
+		
+		position=0;										//Current Question position in Question list
+		
+		resetMode=true;									//Flag to switch between single choice and multiple choices question  mode  
+		this.randomMode=randomMode;						//Flag to set test question sequential or random mode
 
 		//Create action listener for the button in single answer mode
 		singleAnsListener=new ActionListener() {
@@ -211,19 +219,19 @@ public class Test extends JFrame {
 
 	public void addQuestionlistToModel() {
 
-		int totalQ=qlist.size();
+		int totalQ=qArray.length;
 		int maxListSize=10;
 		int totalFullRow=totalQ/maxListSize;
 		int remainQ=totalQ%maxListSize;
-		int currentQID=0;		
+		int qNumber=0;		
 
 		//Create Question list Object with full size and add to Question table model
 		for(int i=0;i<totalFullRow;i++) {
 			QuestionList sublist=new QuestionList();
 			for(int j=0;j<maxListSize;j++) {
-				Question question=qlist.get(currentQID);
+				Question question=qlist.get(qNumber);
 				sublist.addQuestion(question);
-				currentQID++;
+				qNumber++;
 			}
 			questionModel.addQuestionList(sublist);
 		}
@@ -231,9 +239,9 @@ public class Test extends JFrame {
 		//Create Question list that adds the remaining Question
 		QuestionList sublist=new QuestionList();
 		for(int i=0;i<remainQ;i++) {
-			Question question=qlist.get(currentQID);
+			Question question=qlist.get(qNumber);
 			sublist.addQuestion(question);
-			currentQID++;
+			qNumber++;
 		}
 
 		//Add empty Question to the last Question list to make it full
@@ -250,15 +258,15 @@ public class Test extends JFrame {
 	public void recordScore(Set<String> selectAns){
 
 		//Find the question with the question ID
-		Question question=qlist.get(qNumber);
+		Question question=qlist.get(position);
 
 		//Set the Question object's select answer and correct answer
-		Set<String> correctAns=qlist.get(qNumber).getCorrectAns();
+		Set<String> correctAns=question.getCorrectAns();
 		question.setSelectAns(selectAns);
 		question.setCorrectAns(correctAns);
 
 		//Set the Question object's correctness
-		if(checkAnswer(selectAns)) {
+		if(selectAns.equals(correctAns)) {
 			question.setCorrect(true);
 		}
 		else {
@@ -269,33 +277,48 @@ public class Test extends JFrame {
 		showCellColor();
 	}
 
-	public boolean checkAnswer(Set<String> selectAnswer) {
-
-		//Check if user had chose the correct answer
-		Set<String> correctAnswer=qlist.get(qNumber).getCorrectAns();
-		return selectAnswer.equals(correctAnswer);
-	}
-
 	public void gotoNextQuestion() {
 
-		qNumber++;			//Increment the question number
+		/*
+		 * If remaining question is not equal to 1, 
+		 * check if current and next question types are the same
+		 */
+		if(position!=qlist.size()-1) {
+			Question currentQ=qlist.get(position);
+			Question nextQ=qlist.get(position+1);
+			if(currentQ.getType()!=nextQ.getType()) {
+				resetMode=true;
+			}
+		}
+		
+		//Remove the last load question
+		Question q=qlist.remove(position);
+		qArray[Integer.parseInt(q.getId())-1]=q;
 
 		//If didn't finish last question in question list, load another question
-		if(qNumber<qlist.size()) {
+		if(qlist.size()!=0) {
 			loadQuestion();
 		}
 		//Otherwise print the test result
 		else {
 			//Review result=new Review(qlist);
-			Score score=new Score(this,qlist);				
+			Score score=new Score(this,qArray);				
 		}
 	}
 
 	public void loadQuestion() {
 
 		//Get current question number
-		Question question=qlist.get(qNumber);
+		Question question;
 
+		if(randomMode) {
+			position=random.nextInt(qlist.size());
+			question=qlist.get(position);
+		}
+		else {
+			question=qlist.get(0);
+		}
+		
 		//If current question type is different from last one
 		if(resetMode) {
 
@@ -331,14 +354,6 @@ public class Test extends JFrame {
 		//Set the remaining buttons that has no choices to be invisible
 		for(int i=count;i<MAX_CHOICES;i++) {
 			blist.get(i).setVisible(false);
-		}
-
-		//Check if current and next question types are the same
-		if(qNumber!=qlist.size()-1) {
-			Question nextQ=qlist.get(qNumber+1);
-			if(question.getType()!=nextQ.getType()) {
-				resetMode=true;
-			}
 		}
 	}
 

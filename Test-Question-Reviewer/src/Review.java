@@ -23,7 +23,7 @@ public class Review extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Review(ArrayList<Question> qlist, Boolean reviewMistakeOnly) {
+	public Review(Question[] qArray, Boolean reviewMistakeOnly) {
 
 		//Create content pane
 		JPanel contentPane = new JPanel();
@@ -35,7 +35,7 @@ public class Review extends JFrame {
 		textpane.setFont(new Font("Monospaced", Font.PLAIN, 25));
 		
 		//Set the text for the text pane
-		reviewQuestion(qlist,reviewMistakeOnly);
+		reviewQuestion(qArray,reviewMistakeOnly);
 
 		//Create scroll pane for the text pane
 		JScrollPane scrollPane=new JScrollPane(textpane,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -50,14 +50,14 @@ public class Review extends JFrame {
 		setVisible(true);
 	}
 
-	public void reviewQuestion(ArrayList<Question> qlist, Boolean reviewMistakeOnly) {
+	public void reviewQuestion(Question[] qArray, Boolean reviewMistakeOnly) {
 
-		int totalQ=qlist.size();
+		int totalQ=qArray.length;
 
 		//Review mistaken questions if user choose "Review Mistakes"
 		if(reviewMistakeOnly) {
 			for(int i=0;i<totalQ;i++) {
-				Question question=qlist.get(i);
+				Question question=qArray[i];
 				if(!(question.isCorrect())) {
 					loadQuestionWithStyle(question);
 				}
@@ -67,7 +67,7 @@ public class Review extends JFrame {
 		//Review all questions if user choose "Review All"
 		else {
 			for(int i=0;i<totalQ;i++) {
-				Question question=qlist.get(i);
+				Question question=qArray[i];
 				loadQuestionWithStyle(question);
 			}
 		}
@@ -86,8 +86,7 @@ public class Review extends JFrame {
 
 		SimpleAttributeSet corAttribute=new SimpleAttributeSet();
 		StyleConstants.setBold(corAttribute, true);
-		StyleConstants.setForeground(corAttribute, corColor);
-		
+		StyleConstants.setForeground(corAttribute, corColor);		
 
 		SimpleAttributeSet selAttribute=new SimpleAttributeSet();
 		StyleConstants.setBold(selAttribute, true);
