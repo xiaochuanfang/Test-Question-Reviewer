@@ -4,10 +4,18 @@ import java.math.RoundingMode;
 public class Number {
 	
 	//Round the decimal number into specific decimal place
-	public double roundDecimal(double num, int deci) {
+	public double roundDecimal(double num, int deci){
+		if(deci<=0) {
+			throw new IllegalArgumentException("Argument 'deci' must be greater than zero");
+		}
 		BigDecimal instance=new BigDecimal(Double.toString(num));
 		instance=instance.setScale(deci,RoundingMode.HALF_UP);
 		return instance.doubleValue();
+	}
+	
+	//Check if a double variable has all zero after decimal
+	public boolean isIntValue(double num) {
+		return ((num==Math.floor(num)) && !Double.isInfinite(num));
 	}
 	
 	/*Convert the alphabet into number where the 

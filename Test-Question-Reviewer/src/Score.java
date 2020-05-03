@@ -2,33 +2,31 @@ import java.awt.Font;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 
-public class Score extends JFrame {
+public class Score extends JDialog {
 
-	private JPanel contentPane;
-	private ArrayList<Question> qlist;
+	private Question[] qArray;
 	
 	private final Font font=new Font("Monospaced", Font.PLAIN, 25);
 
 	/**
 	 * Create the frame.
 	 */
-	public Score(JFrame frame,ArrayList<Question> q) {
+	public Score(JFrame frame,Question[] q) {
 		
-		qlist=q;
+		qArray=q;
 		
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		JPanel contentPane = new JPanel();
 		contentPane.setLayout(null);
 	
 		//Create label to show the score
 		JLabel txScore = new JLabel();
-		txScore.setBounds(262, 152, 469, 67);
+		txScore.setBounds(262, 152, 483, 67);
 		txScore.setFont(font);
 		String score=calculateScore();
 		txScore.setText(score);	
@@ -53,7 +51,7 @@ public class Score extends JFrame {
 		btnReviewAll.setBounds(373, 309, 260, 67);
 		btnReviewAll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Review review=new Review(qlist,false);
+				Review review=new Review(qArray,false);
 				frame.dispose();
 				dispose();
 			}
@@ -66,7 +64,7 @@ public class Score extends JFrame {
 		btnReviewMistake.setFont(font);
 		btnReviewMistake.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Review review=new Review(qlist,true);
+				Review review=new Review(qArray,true);
 				frame.dispose();
 				dispose();
 			}
@@ -74,7 +72,7 @@ public class Score extends JFrame {
 		contentPane.add(btnReviewMistake);
 		
 		//Set frame operation and position
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1011, 521);
 		setContentPane(contentPane);
 		setLocationRelativeTo(null);
@@ -85,23 +83,31 @@ public class Score extends JFrame {
 
 		//Count number of correct questions
 		double count=0;
-		int totalQ=qlist.size();
+		int totalQ=qArray.length;
 		for(int i=0;i<totalQ;i++) {
-			if(qlist.get(i).isCorrect()) {
+			if(qArray[i].isCorrect()) {
 				count++;
 			}
 		}
 		
 		//Calculate the score
 		double score=count/totalQ*100;
-
-		//Store the score in one decimal place
-		Number number=new Number();
-		score=number.roundDecimal(score, 1);
-
-		//Return the final score
 		String result="\n";
-		result=result+"Your score on this test is "+score;
+		
+		//Store the score in one decimal place without trailing zero
+		Number number=new Number();
+		score=number.roundDecimal(score, 0);
+		
+		//If score is a whole number, print it in integer
+		if(number.isIntValue(score)) {
+			result=result+"Your score on this test is "+(int)score;
+		}
+		
+		//Otherwise print in decimal number
+		else {
+			result=result+"Your score on this test is "+score;
+		}
+
 		return result;
 	}
 }
