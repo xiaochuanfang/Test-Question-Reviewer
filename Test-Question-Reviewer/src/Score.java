@@ -96,7 +96,7 @@ public class Score extends JDialog {
 		
 		//Store the score in one decimal place without trailing zero
 		Number number=new Number();
-		score=number.roundDecimal(score, 0);
+		score=number.roundDecimal(score, 1);
 		
 		//If score is a whole number, print it in integer
 		if(number.isIntValue(score)) {

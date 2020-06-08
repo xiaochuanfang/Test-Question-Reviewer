@@ -45,20 +45,7 @@ public class Menu extends JFrame {
 		btnNewTest.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				//Open file with JFileChooser
-				JFileChooser chooser=new JFileChooser();
-				
-				//Set JFileChooser GUI size
-				chooser.setPreferredSize(new Dimension(800,600));
-				
-				//Set the path of the JFileChooser
-				String path=System.getProperty("user.dir")+System.getProperty("file.separator");
-				File dir=new File(path);
-				chooser.setCurrentDirectory(dir);
-				
-				//Set the filename font inside the GUI
-				DialogModifyer modifyer=new DialogModifyer();
-				modifyer.setDialogFont(chooser.getComponents());
+				FileChooser chooser=new FileChooser(true,true,true);
 				
 				//Read the file if user choose to open the file
 				int returnVal = chooser.showOpenDialog(btnNewTest);
