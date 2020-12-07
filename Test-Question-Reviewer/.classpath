@@ -8,5 +8,17 @@
 	<classpathentry kind="lib" path="C:/Users/Frank Fang/Documents/Github/Test-Question-Reviewer/Test-Question-Reviewer/lib/xmlbeans-3.1.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Frank Fang/Desktop/commons-collections4-4.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Frank Fang/Desktop/commons-math3-3.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Frank Fang/Downloads/Aspose.Cells-for-Java-master/Examples/libs/bcprov-jdk16-146.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Frank Fang/Downloads/Aspose.Cells-for-Java-master/Examples/libs/jai_imageio.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Frank Fang/.m2/repository/com/aspose/aspose-cells/20.4/aspose-cells-20.4.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/Frank Fang/.m2/repository/com/aspose/aspose-cells/20.4/aspose-cells-20.4-javadoc.jar!/"/>
+			<attribute name="maven.groupId" value="com.aspose"/>
+			<attribute name="maven.artifactId" value="aspose-cells"/>
+			<attribute name="maven.version" value="20.4"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,4 +1,6 @@
+import java.awt.image.BufferedImage;
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,17 +9,22 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.aspose.cells.ImageOrPrintOptions;
+import com.aspose.cells.PageSetup;
+import com.aspose.cells.SheetRender;
+import com.aspose.cells.Workbook;
+import com.aspose.cells.Worksheet;
 
 public class Readexcel {
 	
-	private FileInputStream fi;
+	private FileInputStream fis;
 	private HSSFWorkbook wordbook;
 	private HSSFSheet sheet;
 	
@@ -27,8 +34,8 @@ public class Readexcel {
 	public Readexcel(File file) throws IOException {
 		
 		//Read excel file at sheet 0
-		fi=new FileInputStream(file);
-		wordbook=new HSSFWorkbook(fi);
+		fis=new FileInputStream(file);
+		wordbook=new HSSFWorkbook(fis);
 		sheet=wordbook.getSheetAt(0);
 	}
 	
@@ -45,7 +52,7 @@ public class Readexcel {
 		singleAnsType.add("单选题");
 		singleAnsType.add("判断题");
 
-		//Add all possible input values for single answer type set
+		//Add all possible input values for multiple answers type set
 		Set<String> multiAnsType=new HashSet<String>();
 		multiAnsType.add("multiple answer");
 		multiAnsType.add("多选题");
@@ -118,8 +125,47 @@ public class Readexcel {
 		
 		//Close the wordbook and file reader
 		wordbook.close();
-		fi.close();
+		fis.close();
 		
 		return qList;
+	}
+	
+	public File createExcelPreview(File file, int page) throws Exception {
+		
+		//Open the excel file with target page
+		String sheetDir=file.getAbsolutePath();
+		Workbook book=new Workbook(sheetDir);
+		Worksheet sheet = book.getWorksheets().get(page);
+		
+		//Show row and column header 
+		PageSetup pageSetup=sheet.getPageSetup();
+		pageSetup.setPrintHeadings(true);
+		
+		//Define ImageOrPrintOptions
+		ImageOrPrintOptions imgOptions = new ImageOrPrintOptions();
+		imgOptions.setVerticalResolution(170);			// Set resolution
+		imgOptions.setHorizontalResolution(170);
+		imgOptions.setOnePagePerSheet(true);
+		
+		//imgOptions.setImageFormat(ImageFormat.getJpeg());  //Set desired image extension
+		//imgOptions.setDesiredSize(2818, 1754);		//Set desire size
+
+		// Render the sheet with respect to specified image/print options
+		SheetRender render = new SheetRender(sheet, imgOptions);
+		String sheetPreview="temp.jpg";		//Name of the temporary image
+		render.toImage(0,sheetPreview);
+		
+		//Crop image to remove unnecessary border from Aspose
+		String currentDir=System.getProperty("user.dir")+System.getProperty("file.separator");
+		File sheetImg=new File(currentDir+sheetPreview);	
+		BufferedImage bufferImg=ImageIO.read(sheetImg);		//Read rendered image
+		BufferedImage cropImg=bufferImg.getSubimage(100, 135, bufferImg.getWidth()-170, bufferImg.getHeight()-135);	//Crop image
+		File previewImg=new File(currentDir+"Preivew.jpg");	
+		ImageIO.write(cropImg, "jpg", previewImg);			//Create image
+		
+		//Delete temporary generate image
+		sheetImg.delete();
+		
+		return previewImg;
 	}
 }
