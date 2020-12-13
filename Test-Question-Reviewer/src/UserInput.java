@@ -27,9 +27,9 @@ public class UserInput extends JDialog {
 	private JTextArea taAnswer;
 	private JTextArea taType;
 	private JTextArea taStartRow;
+	private JTextArea taEndRow;
 
 	private InputChecker check=new InputChecker();
-	private Number number=new Number();
 	private Readexcel reader;
 
 	private final Font font=new Font("Monospaced", Font.BOLD, 25);
@@ -41,13 +41,8 @@ public class UserInput extends JDialog {
 	 */
 	public UserInput(File file){
 
-		try {
-			reader=new Readexcel(file);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
+		reader=new Readexcel();
+
 		//Create content pane
 		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -68,7 +63,7 @@ public class UserInput extends JDialog {
 		//Create scroll bar for the preview image
 		ImageIcon icon=new ImageIcon(filename);
 		JScrollPane scrollPane = new JScrollPane(new JLabel(icon));
-		scrollPane.setBounds(0, 0, 1406, 337);
+		scrollPane.setBounds(0, 0, 1590, 337);
 		contentPane.add(scrollPane);
 
 		//Create text area for Question Type column input
@@ -104,8 +99,14 @@ public class UserInput extends JDialog {
 		//Create text area for start row input 
 		taStartRow = new JTextArea();
 		taStartRow.setFont(font);
-		taStartRow.setBounds(1150, 472, 54, 44);
+		taStartRow.setBounds(1104, 472, 54, 44);
 		contentPane.add(taStartRow);
+		
+		//Create Text area for end row input
+		taEndRow = new JTextArea();
+		taEndRow.setFont(font);
+		taEndRow.setBounds(1379, 472, 44, 46);
+		contentPane.add(taEndRow);
 
 		//Label for "Type" 
 		JLabel lbType = new JLabel("Type");
@@ -142,62 +143,70 @@ public class UserInput extends JDialog {
 		dash.setBounds(358, 481, 69, 20);
 		contentPane.add(dash);
 
-		//Label for "Question Starts At Row"
-		JLabel lbStartAt = new JLabel("Question Start Row");
+		//Label for "Starts At Row"
+		JLabel lbStartAt = new JLabel("Start Row");
 		lbStartAt.setFont(font);
-		lbStartAt.setBounds(1051, 394, 270, 37);
+		lbStartAt.setBounds(1064, 394, 146, 37);
 		contentPane.add(lbStartAt);
+		
+		//Label for "End At Row"
+		JLabel lbEndAt = new JLabel("End Row");
+		lbEndAt.setFont(font);
+		lbEndAt.setBounds(1346, 389, 117, 46);
+		contentPane.add(lbEndAt);
 
 		//Button to start the test
 		JButton btnStartTest = new JButton("Start Test");
 		btnStartTest.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				int type,ques,ans,choi,choi2,startAt;
-
-				//Get the user inputs into string
+				//Get the user inputs
 				String inputType=taType.getText();
 				String inputQues=taStatement.getText();
 				String inputAns=taAnswer.getText();
 				String inputChoi=taStartChoice.getText();
 				String inputChoi2=taEndChoice.getText();
 				String inputStartAt=taStartRow.getText();
+				String inputEndAt=taEndRow.getText();
+				
+				int startAt=Integer.parseInt(inputStartAt);
+				int endAt=Integer.parseInt(inputEndAt);
 
 				//Check if the column inputs for ID, Type, Question, Answer, and Choices are alphabets 
 				if(check.isAlphabet(inputType) && check.isAlphabet(inputQues) && check.isAlphabet(inputAns) 
 						&& check.isAlphabet(inputChoi) && check.isAlphabet(inputChoi2)) {
 
 					//Check if the question start row input is number  
-					if(check.isPosInt(Integer.parseInt(inputStartAt), true)) {
+					if(check.isPosInt(startAt, true) 
+							&& check.isPosInt(endAt, false)
+							&& startAt<=endAt) {
 
-						//Save all the inputs in integers
-						type=number.alphaToInt(inputType, 0);
-						ques=number.alphaToInt(inputQues, 0);
-						ans=number.alphaToInt(inputAns, 0);
-						choi=number.alphaToInt(inputChoi, 0);
-						choi2=number.alphaToInt(inputChoi2, 0);
-						startAt=Integer.parseInt(inputStartAt);
-
+						//Create the Question ArrayList
+						ArrayList<Question> qlist;
 						try {
-							//Create the Question ArrayList
-							ArrayList<Question> qlist=reader.createQuestionList(type,ques,ans,choi,choi2,startAt);
+							qlist = reader.createQuestionList(file,0,inputType,inputQues,inputAns,inputChoi,inputChoi2,startAt,endAt);
 
 							//Show dialog for user to choose test mode
 							TestMode mode=new TestMode(qlist);
-							
-							//Save the input values for next time
-							saveDefaultValue();
-
-							dispose();
-
-						} catch (IOException exception) {
-							exception.printStackTrace();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
+
+						//Save the input values for next time
+						try {
+							saveDefaultValue();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+						dispose();
 					}
 
 					//If user enter a non-numerical input for start row, show an error message
 					else {
-						JOptionPane.showMessageDialog(null, "Enter an number for the 'Start At Row'!",
+						JOptionPane.showMessageDialog(null, "Enter an valid number for 'Start Row' and 'End Row'!",
 								"Invalid Input", JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -207,7 +216,6 @@ public class UserInput extends JDialog {
 					JOptionPane.showMessageDialog(null, "Enter an Engish alphabet for the first 5 inputs!",
 							"Invalid Input", JOptionPane.ERROR_MESSAGE);
 				}
-
 			}
 		});
 
@@ -224,7 +232,7 @@ public class UserInput extends JDialog {
 		}
 
 		//Set frame operation and position
-		setBounds(100, 100, 1443, 707);
+		setBounds(100, 100, 1615, 707);
 		setContentPane(contentPane);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -241,7 +249,8 @@ public class UserInput extends JDialog {
 		fileWriter.write(taAnswer.getText()+"\n");
 		fileWriter.write(taStartChoice.getText()+"\n");
 		fileWriter.write(taEndChoice.getText()+"\n");
-		fileWriter.write(taStartRow.getText());
+		fileWriter.write(taStartRow.getText()+"\n");
+		fileWriter.write(taEndRow.getText());
 
 		fileWriter.close();
 	}
@@ -258,6 +267,7 @@ public class UserInput extends JDialog {
 			taStartChoice.setText(scanner.next());
 			taEndChoice.setText(scanner.next());
 			taStartRow.setText(scanner.next());
+			taEndRow.setText(scanner.next());
 
 			scanner.close();
 		}
