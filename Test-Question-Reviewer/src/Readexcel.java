@@ -23,18 +23,16 @@ public class Readexcel {
 	//Constructors
 	public Readexcel() {}
 
-	public ArrayList<Question> createQuestionList(File file, int page, 
+	public String fillQuestionList(ArrayList<Question> qlist, File file, int page, 
 			String typeColumn, String quesColumn, String ansColumn, String choiStartColumn, 
 			String choiEndColumn, String startRow, String endRow) throws Exception {
 
+		String message="";
+		
 		//Open the excel file with target page
 		String sheetDir=file.getAbsolutePath();
 		Workbook book=new Workbook(sheetDir);
 		Worksheet sheet = book.getWorksheets().get(page);
-
-		//ArrayList to store list of Question object
-		ArrayList<Question> qList=new ArrayList<Question>();
-		int currentQID=0;
 
 		//Add all possible input values for single answer type set
 		Set<String> singleAnsType=new HashSet<String>();
@@ -60,8 +58,6 @@ public class Readexcel {
 		//Read current row until the last row
 		while(currentRow<=lastRow) {
 
-			currentQID++;
-
 			//Create a Question object
 			Question question=new Question();
 
@@ -71,11 +67,12 @@ public class Readexcel {
 			Cell answer=sheet.getCells().get(ansColumn+currentRow);
 
 			//Set the Question object's id, question
-			question.setId(Integer.toString(currentQID));
+			question.setId(Integer.toString(currentRow));
 			question.setStatement(statement.getStringValue());
 
 			//Set the Question object's type
 			String qType=type.getStringValue().toLowerCase();
+
 			if(singleAnsType.contains(qType)) {
 				question.setType("single answer");
 			}
@@ -85,10 +82,7 @@ public class Readexcel {
 			
 			//Report error if no match type found
 			else {
-				currentRow+=1;
-				JOptionPane.showMessageDialog(null, "Invalid cell in row "+currentRow+" column "
-						+typeColumn+": "+qType,"Invalid Input", JOptionPane.ERROR_MESSAGE);
-				System.exit(1);
+				message="Invalid cell in row "+currentRow+" column "+typeColumn+": "+qType;
 			}
 
 			//Set the Question object's answer
@@ -119,11 +113,10 @@ public class Readexcel {
 			question.setChoices(choices);
 
 			//Add the Question object into the question list and increment the question number
-			qList.add(question);
+			qlist.add(question);
 			currentRow++;
 		}
-
-		return qList;
+		return message;
 	}
 
 	public File createExcelPreview(File file, int page) throws Exception {

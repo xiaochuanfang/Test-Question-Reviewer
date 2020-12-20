@@ -40,7 +40,7 @@ public class UserInput extends JDialog {
 	private JLabel lbErrorColumn;
 	private JLabel lbErrorRow;
 
-	private Readexcel reader;
+	private Readexcel reader=new Readexcel();;
 	private InputChecker check=new InputChecker();
 
 	private final Font font=new Font("Monospaced", Font.BOLD, 25);
@@ -54,8 +54,6 @@ public class UserInput extends JDialog {
 	 * @throws Exception 
 	 */
 	public UserInput(File file){
-
-		reader=new Readexcel();
 
 		//Create content pane
 		JPanel contentPane = new JPanel();
@@ -107,49 +105,49 @@ public class UserInput extends JDialog {
 		//Create text area for Question Type column input
 		taType = new JTextArea();
 		taType.setFont(font);
-		taType.setBounds(830, 472, 59, 46);
+		taType.setBounds(885, 537, 59, 46);
 		taType.addKeyListener(alphabetAdapter);
 		contentPane.add(taType);
 
 		//Create text area for question column input
 		taStatement = new JTextArea();
 		taStatement.setFont(font);
-		taStatement.setBounds(116, 472, 59, 44);
+		taStatement.setBounds(116, 537, 59, 44);
 		taStatement.addKeyListener(alphabetAdapter);
 		contentPane.add(taStatement);
 
 		//Create text area for answer column input
 		taAnswer = new JTextArea();
 		taAnswer.setFont(font);
-		taAnswer.setBounds(603, 472, 54, 44);
+		taAnswer.setBounds(625, 537, 54, 44);
 		taAnswer.addKeyListener(alphabetAdapter);
 		contentPane.add(taAnswer);
 
 		//Create text area for choice start column input
 		taStartChoice = new JTextArea();
 		taStartChoice.setFont(font);
-		taStartChoice.setBounds(337, 472, 44, 44);
+		taStartChoice.setBounds(335, 537, 44, 44);
 		taStartChoice.addKeyListener(alphabetAdapter);
 		contentPane.add(taStartChoice);
 
 		//Create text area for choice end column input
 		taEndChoice = new JTextArea();
 		taEndChoice.setFont(font);
-		taEndChoice.setBounds(408, 472, 44, 44);
+		taEndChoice.setBounds(408, 537, 44, 44);
 		taEndChoice.addKeyListener(alphabetAdapter);
 		contentPane.add(taEndChoice);
 
 		//Create text area for start row input 
 		taStartRow = new JTextArea();
 		taStartRow.setFont(font);
-		taStartRow.setBounds(1089, 472, 81, 44);
+		taStartRow.setBounds(1150, 537, 81, 44);
 		taStartRow.addKeyListener(numAdapter);
 		contentPane.add(taStartRow);
 
 		//Create Text area for end row input
 		taEndRow = new JTextArea();
 		taEndRow.setFont(font);
-		taEndRow.setBounds(1362, 472, 81, 44);
+		taEndRow.setBounds(1402, 537, 81, 44);
 		taEndRow.addKeyListener(numAdapter);
 		contentPane.add(taEndRow);
 
@@ -178,68 +176,69 @@ public class UserInput extends JDialog {
 		JLabel lbType = new JLabel("Type");
 		lbType.setHorizontalAlignment(SwingConstants.CENTER);
 		lbType.setFont(font);
-		lbType.setBounds(810, 390, 93, 44);
+		lbType.setBounds(865, 460, 93, 44);
 		contentPane.add(lbType);
 
 		//Label for "Question"
 		JLabel lbStatement = new JLabel("Question");
 		lbStatement.setHorizontalAlignment(SwingConstants.CENTER);
 		lbStatement.setFont(font);
-		lbStatement.setBounds(73, 394, 146, 37);
+		lbStatement.setBounds(73, 464, 146, 37);
 		contentPane.add(lbStatement);
 
 		//Label for "Answer"
 		JLabel lbAnswer = new JLabel("Answer");
 		lbAnswer.setHorizontalAlignment(SwingConstants.CENTER);
 		lbAnswer.setFont(font);
-		lbAnswer.setBounds(575, 394, 117, 37);
+		lbAnswer.setBounds(600, 464, 117, 37);
 		contentPane.add(lbAnswer);
 
 		//Label for "Choices"
 		JLabel lbChoices = new JLabel("Choices");
 		lbChoices.setHorizontalAlignment(SwingConstants.CENTER);
 		lbChoices.setFont(font);
-		lbChoices.setBounds(335, 394, 117, 37);
+		lbChoices.setBounds(335, 464, 117, 37);
 		contentPane.add(lbChoices);
 
 		//Label for "-"
 		JLabel dash = new JLabel("-");
 		dash.setHorizontalAlignment(SwingConstants.CENTER);
 		dash.setFont(font);
-		dash.setBounds(358, 481, 69, 20);
+		dash.setBounds(358, 546, 69, 20);
 		contentPane.add(dash);
 
 		//Label for "Starts At Row"
 		JLabel lbStartAt = new JLabel("Start Row");
 		lbStartAt.setFont(font);
-		lbStartAt.setBounds(1064, 394, 146, 37);
+		lbStartAt.setBounds(1125, 464, 146, 37);
 		contentPane.add(lbStartAt);
 
 		//Label for "End At Row"
 		JLabel lbEndAt = new JLabel("End Row");
 		lbEndAt.setFont(font);
-		lbEndAt.setBounds(1346, 389, 117, 46);
+		lbEndAt.setBounds(1388, 459, 117, 46);
 		contentPane.add(lbEndAt);
 
 		//Label for error message when user leave black input
 		lbErrorEmpty = new JLabel("");
+		lbErrorEmpty.setHorizontalAlignment(SwingConstants.CENTER);
 		lbErrorEmpty.setFont(errorFont);
 		lbErrorEmpty.setForeground(Color.RED);
-		lbErrorEmpty.setBounds(574, 353, 636, 37);
+		lbErrorEmpty.setBounds(116, 391, 1327, 37);
 		contentPane.add(lbErrorEmpty);
 		
 		//Label for error message when user enter wrong choices range
 		lbErrorColumn = new JLabel("");
 		lbErrorColumn.setFont(errorFont);
 		lbErrorColumn.setForeground(Color.RED);
-		lbErrorColumn.setBounds(337, 532, 320, 37);
+		lbErrorColumn.setBounds(337, 597, 320, 37);
 		contentPane.add(lbErrorColumn);
 		
 		//Label for error message when user enter wrong question range
 		lbErrorRow = new JLabel("");
 		lbErrorRow.setFont(errorFont);
 		lbErrorRow.setForeground(Color.RED);
-		lbErrorRow.setBounds(1197, 532, 319, 37);
+		lbErrorRow.setBounds(1160, 597, 319, 37);
 		contentPane.add(lbErrorRow);
 
 		//Button to start the test
@@ -286,34 +285,38 @@ public class UserInput extends JDialog {
 				if(isAllValidInput) {
 
 					//Create the Question ArrayList
-					ArrayList<Question> qlist;
+					ArrayList<Question> qlist=new ArrayList<Question>();
 
 					try {
-						qlist = reader.createQuestionList(file,0,inputType,inputQues,inputAns,inputChoi,inputChoi2,inputStartAt,inputEndAt);
-
-						//Show dialog for user to choose test mode
-						TestMode mode=new TestMode(qlist);
+						//Check if there any reading error message
+						String message = reader.fillQuestionList(qlist,file,0,inputType,inputQues,inputAns,inputChoi,inputChoi2,inputStartAt,inputEndAt);
+						if(check.isEmptyString(message)) {
+							
+							//Show dialog for user to choose test mode
+							TestMode mode=new TestMode(qlist);
+							
+							//Save the input values for next time
+							saveDefaultValue();
+							
+							//Close UserInput GUI
+							dispose();
+						}
+						else {
+							lbErrorEmpty.setText(message);
+						}
+						
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						System.out.println("e toString is "+e.toString());
+						System.out.println("e getmessage is "+e.getMessage());
 					}
-
-					//Save the input values for next time
-					try {
-						saveDefaultValue();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-					dispose();
+					
 				}
 			}
 		});
 
 		//Set the "Start test" button attribute
 		btnStartTest.setFont(font);
-		btnStartTest.setBounds(651, 575, 197, 44);
+		btnStartTest.setBounds(689, 626, 197, 44);
 		contentPane.add(btnStartTest);
 
 		//Load last used value
@@ -324,7 +327,7 @@ public class UserInput extends JDialog {
 		}
 
 		//Set frame operation and position
-		setBounds(100, 100, 1615, 707);
+		setBounds(100, 100, 1615, 769);
 		setContentPane(contentPane);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
