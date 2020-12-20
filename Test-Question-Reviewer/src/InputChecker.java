@@ -1,4 +1,4 @@
-import java.util.Set;
+
 
 public class InputChecker {
 	
@@ -27,5 +27,26 @@ public class InputChecker {
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean isValidRange(String a, String b, boolean isAlphabetic) {
+		if(isAlphabetic) {
+			int minRange=Math.min(a.length(), b.length());
+			for(int i=0;i<minRange;i++) {
+				if(a.charAt(i)>b.charAt(i)) {
+					return false;
+				};
+			}
+		}
+		else if(!isAlphabetic){
+			int c=Integer.parseInt(a);
+			int d=Integer.parseInt(b);
+			return c<=d;
+		}
+		return true;
+	}
+	
+	public boolean isEmptyString(String s) {
+		return (s==null || s.trim().isEmpty());
 	}
 }

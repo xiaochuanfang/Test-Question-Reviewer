@@ -1,6 +1,12 @@
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import javax.swing.JTextArea;
+
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +24,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class UserInput extends JDialog {
 
@@ -28,12 +36,18 @@ public class UserInput extends JDialog {
 	private JTextArea taType;
 	private JTextArea taStartRow;
 	private JTextArea taEndRow;
+	private JLabel lbErrorEmpty;
+	private JLabel lbErrorColumn;
+	private JLabel lbErrorRow;
 
-	private InputChecker check=new InputChecker();
 	private Readexcel reader;
+	private InputChecker check=new InputChecker();
 
 	private final Font font=new Font("Monospaced", Font.BOLD, 25);
+	private final Font errorFont=new Font("Monospaced",Font.ITALIC,20);
 	private final File defaultFile=new File("default.txt");
+	private static int MAX_ALPHA_INPUT_LENGTH=2;
+	private static int MAX_NUM_INPUT_LENGTH=4;
 
 	/**
 	 * Create the frame.
@@ -66,47 +80,99 @@ public class UserInput extends JDialog {
 		scrollPane.setBounds(0, 0, 1590, 337);
 		contentPane.add(scrollPane);
 
+		//Create key restriction for alphabet only input
+		KeyAdapter alphabetAdapter=new KeyAdapter() {
+			public void keyTyped(KeyEvent arg0) {
+				char c=arg0.getKeyChar();
+				if(!(Character.isAlphabetic(c)) && c!=KeyEvent.VK_BACK_SPACE
+						&& c!=KeyEvent.VK_DELETE) {
+					getToolkit().beep();
+					arg0.consume();
+				}
+			}
+		};
+
+		//Create key restriction for number only input
+		KeyAdapter numAdapter=new KeyAdapter() {
+			public void keyTyped(KeyEvent arg0) {
+				char c=arg0.getKeyChar();
+				if(!(Character.isDigit(c)) && c!=KeyEvent.VK_BACK_SPACE
+						&& c!=KeyEvent.VK_DELETE) {
+					getToolkit().beep();
+					arg0.consume();
+				}
+			}
+		};
+
 		//Create text area for Question Type column input
 		taType = new JTextArea();
 		taType.setFont(font);
 		taType.setBounds(830, 472, 59, 46);
+		taType.addKeyListener(alphabetAdapter);
 		contentPane.add(taType);
 
 		//Create text area for question column input
 		taStatement = new JTextArea();
 		taStatement.setFont(font);
 		taStatement.setBounds(116, 472, 59, 44);
+		taStatement.addKeyListener(alphabetAdapter);
 		contentPane.add(taStatement);
 
 		//Create text area for answer column input
 		taAnswer = new JTextArea();
 		taAnswer.setFont(font);
 		taAnswer.setBounds(603, 472, 54, 44);
+		taAnswer.addKeyListener(alphabetAdapter);
 		contentPane.add(taAnswer);
 
 		//Create text area for choice start column input
 		taStartChoice = new JTextArea();
 		taStartChoice.setFont(font);
 		taStartChoice.setBounds(337, 472, 44, 44);
+		taStartChoice.addKeyListener(alphabetAdapter);
 		contentPane.add(taStartChoice);
 
 		//Create text area for choice end column input
 		taEndChoice = new JTextArea();
 		taEndChoice.setFont(font);
 		taEndChoice.setBounds(408, 472, 44, 44);
+		taEndChoice.addKeyListener(alphabetAdapter);
 		contentPane.add(taEndChoice);
 
 		//Create text area for start row input 
 		taStartRow = new JTextArea();
 		taStartRow.setFont(font);
-		taStartRow.setBounds(1104, 472, 54, 44);
+		taStartRow.setBounds(1089, 472, 81, 44);
+		taStartRow.addKeyListener(numAdapter);
 		contentPane.add(taStartRow);
-		
+
 		//Create Text area for end row input
 		taEndRow = new JTextArea();
 		taEndRow.setFont(font);
-		taEndRow.setBounds(1379, 472, 44, 46);
+		taEndRow.setBounds(1362, 472, 81, 44);
+		taEndRow.addKeyListener(numAdapter);
 		contentPane.add(taEndRow);
+
+		//Convert all input in Text Area for type, question, answer, start choice 
+		//and end choice to Upper Case and set limit input length
+		DocumentFilter alphaFilter=new AlphaInputDocumentFilter();
+		AbstractDocument typeDoc=(AbstractDocument) taType.getDocument();
+		typeDoc.setDocumentFilter(alphaFilter);
+		AbstractDocument quesDoc=(AbstractDocument) taStatement.getDocument();
+		quesDoc.setDocumentFilter(alphaFilter);
+		AbstractDocument ansDoc=(AbstractDocument) taAnswer.getDocument();
+		ansDoc.setDocumentFilter(alphaFilter);
+		AbstractDocument startChoiDoc=(AbstractDocument) taStartChoice.getDocument();
+		startChoiDoc.setDocumentFilter(alphaFilter);
+		AbstractDocument endChoiDoc=(AbstractDocument) taEndChoice.getDocument();
+		endChoiDoc.setDocumentFilter(alphaFilter);
+
+		//Set limit length input for start row and end row text area
+		DocumentFilter numFIlter=new NumInputDocumentFilter();
+		AbstractDocument startRowDoc=(AbstractDocument) taStartRow.getDocument();
+		startRowDoc.setDocumentFilter(numFIlter);
+		AbstractDocument endRowDoc=(AbstractDocument) taEndRow.getDocument();
+		endRowDoc.setDocumentFilter(numFIlter);
 
 		//Label for "Type" 
 		JLabel lbType = new JLabel("Type");
@@ -148,18 +214,46 @@ public class UserInput extends JDialog {
 		lbStartAt.setFont(font);
 		lbStartAt.setBounds(1064, 394, 146, 37);
 		contentPane.add(lbStartAt);
-		
+
 		//Label for "End At Row"
 		JLabel lbEndAt = new JLabel("End Row");
 		lbEndAt.setFont(font);
 		lbEndAt.setBounds(1346, 389, 117, 46);
 		contentPane.add(lbEndAt);
 
+		//Label for error message when user leave black input
+		lbErrorEmpty = new JLabel("");
+		lbErrorEmpty.setFont(errorFont);
+		lbErrorEmpty.setForeground(Color.RED);
+		lbErrorEmpty.setBounds(574, 353, 636, 37);
+		contentPane.add(lbErrorEmpty);
+		
+		//Label for error message when user enter wrong choices range
+		lbErrorColumn = new JLabel("");
+		lbErrorColumn.setFont(errorFont);
+		lbErrorColumn.setForeground(Color.RED);
+		lbErrorColumn.setBounds(337, 532, 320, 37);
+		contentPane.add(lbErrorColumn);
+		
+		//Label for error message when user enter wrong question range
+		lbErrorRow = new JLabel("");
+		lbErrorRow.setFont(errorFont);
+		lbErrorRow.setForeground(Color.RED);
+		lbErrorRow.setBounds(1197, 532, 319, 37);
+		contentPane.add(lbErrorRow);
+
 		//Button to start the test
 		JButton btnStartTest = new JButton("Start Test");
 		btnStartTest.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
+				//Reset error message
+				lbErrorEmpty.setText("");
+				lbErrorColumn.setText("");
+				lbErrorRow.setText("");
+
+				boolean isAllValidInput=true;
+				
 				//Get the user inputs
 				String inputType=taType.getText();
 				String inputQues=taStatement.getText();
@@ -168,60 +262,58 @@ public class UserInput extends JDialog {
 				String inputChoi2=taEndChoice.getText();
 				String inputStartAt=taStartRow.getText();
 				String inputEndAt=taEndRow.getText();
-				
-				int startAt=Integer.parseInt(inputStartAt);
-				int endAt=Integer.parseInt(inputEndAt);
 
-				//Check if the column inputs for ID, Type, Question, Answer, and Choices are alphabets 
-				if(check.isAlphabet(inputType) && check.isAlphabet(inputQues) && check.isAlphabet(inputAns) 
-						&& check.isAlphabet(inputChoi) && check.isAlphabet(inputChoi2)) {
-
-					//Check if the question start row input is number  
-					if(check.isPosInt(startAt, true) 
-							&& check.isPosInt(endAt, false)
-							&& startAt<=endAt) {
-
-						//Create the Question ArrayList
-						ArrayList<Question> qlist;
-						try {
-							qlist = reader.createQuestionList(file,0,inputType,inputQues,inputAns,inputChoi,inputChoi2,startAt,endAt);
-
-							//Show dialog for user to choose test mode
-							TestMode mode=new TestMode(qlist);
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-						//Save the input values for next time
-						try {
-							saveDefaultValue();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-						dispose();
-					}
-
-					//If user enter a non-numerical input for start row, show an error message
-					else {
-						JOptionPane.showMessageDialog(null, "Enter an valid number for 'Start Row' and 'End Row'!",
-								"Invalid Input", JOptionPane.ERROR_MESSAGE);
-					}
+				//Check if all inputs are enter
+				if(check.isEmptyString(inputType) || check.isEmptyString(inputQues) || check.isEmptyString(inputAns)
+						|| check.isEmptyString(inputChoi) || check.isEmptyString(inputChoi2)
+						|| check.isEmptyString(inputStartAt) ||check.isEmptyString(inputEndAt)){
+					lbErrorEmpty.setText("Enter all fields to continue");
+					isAllValidInput=false;
 				}
+				
+				//Check if input choices start and end column is valid range
+				else if(!check.isValidRange(inputChoi, inputChoi2, true)) {
+					lbErrorColumn.setText("Invalid choices range");
+					isAllValidInput=false;
+				}
+				
+				//Check if input choices start and end row is valid range
+				else if(!check.isValidRange(inputStartAt, inputEndAt, false)) {
+					lbErrorRow.setText("Invalid question row range");
+					isAllValidInput=false;
+				}
+				
+				if(isAllValidInput) {
 
-				//If user enter a non-alphabet input for id, question, answer and choices, show an error message
-				else {
-					JOptionPane.showMessageDialog(null, "Enter an Engish alphabet for the first 5 inputs!",
-							"Invalid Input", JOptionPane.ERROR_MESSAGE);
+					//Create the Question ArrayList
+					ArrayList<Question> qlist;
+
+					try {
+						qlist = reader.createQuestionList(file,0,inputType,inputQues,inputAns,inputChoi,inputChoi2,inputStartAt,inputEndAt);
+
+						//Show dialog for user to choose test mode
+						TestMode mode=new TestMode(qlist);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					//Save the input values for next time
+					try {
+						saveDefaultValue();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					dispose();
 				}
 			}
 		});
 
 		//Set the "Start test" button attribute
 		btnStartTest.setFont(font);
-		btnStartTest.setBounds(626, 565, 197, 44);
+		btnStartTest.setBounds(651, 575, 197, 44);
 		contentPane.add(btnStartTest);
 
 		//Load last used value
@@ -271,5 +363,51 @@ public class UserInput extends JDialog {
 
 			scanner.close();
 		}
+	}
+
+	//Create document filter to filter all alphabet to uppercase with limit input length
+	static class AlphaInputDocumentFilter extends DocumentFilter {
+
+		/*
+		 * (non-Javadoc)
+		 * @see javax.swing.text.DocumentFilter#replace(javax.swing.text.DocumentFilter.FilterBypass, int, int, java.lang.String, javax.swing.text.AttributeSet)
+		 * currentLength is the length before typing an input
+		 * offset is the current location when typing an input
+		 * text is the input string
+		 */
+		public void replace(DocumentFilter.FilterBypass fb,int offset,
+				int length, String text, AttributeSet attrs)
+						throws BadLocationException {
+			int currentLength=fb.getDocument().getLength();
+			int overLimit=(currentLength+text.length())-MAX_ALPHA_INPUT_LENGTH;
+
+			if(overLimit>0) {
+				text=text.substring(0,text.length()-overLimit);
+			}
+			if(text.length()>0) {
+				fb.replace(offset, length, text.toUpperCase(), attrs);
+			}
+		}
+
+	}
+
+
+	//Create document filter to filter all alphabet to uppercase with limit input length
+	static class NumInputDocumentFilter extends DocumentFilter {
+
+		public void replace(DocumentFilter.FilterBypass fb,int offset,
+				int length, String text, AttributeSet attrs)
+						throws BadLocationException {
+			int currentLength=fb.getDocument().getLength();
+			int overLimit=(currentLength+text.length())-MAX_NUM_INPUT_LENGTH;
+
+			if(overLimit>0) {
+				text=text.substring(0,text.length()-overLimit);
+			}
+			if(text.length()>0) {
+				fb.replace(offset, length, text, attrs);
+			}
+		}
+
 	}
 }

@@ -25,7 +25,7 @@ public class Readexcel {
 
 	public ArrayList<Question> createQuestionList(File file, int page, 
 			String typeColumn, String quesColumn, String ansColumn, String choiStartColumn, 
-			String choiEndColumn, int startRow, int endRow) throws Exception {
+			String choiEndColumn, String startRow, String endRow) throws Exception {
 
 		//Open the excel file with target page
 		String sheetDir=file.getAbsolutePath();
@@ -49,7 +49,8 @@ public class Readexcel {
 		multiAnsType.add("多选题");
 
 		//Keep track of current row
-		int currentRow=startRow;
+		int currentRow=Integer.parseInt(startRow);
+		int lastRow=Integer.parseInt(endRow);
 		
 		//Get the maximum total number of answer choices
 		int choiEndColumnInt=number.alphaToInt(choiEndColumn, 1);
@@ -57,7 +58,7 @@ public class Readexcel {
 		int numOfChoice=choiEndColumnInt-choiStartColumnInt+1;
 
 		//Read current row until the last row
-		while(currentRow<=endRow) {
+		while(currentRow<=lastRow) {
 
 			currentQID++;
 
