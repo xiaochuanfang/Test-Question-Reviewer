@@ -14,5 +14,23 @@
 			<attribute name="maven.scope" value="compile"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Frank Fang/.m2/repository/com/aspose/aspose-words/20.12/aspose-words-20.12-jdk17.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/Frank Fang/.m2/repository/com/aspose/aspose-words/20.12/aspose-words-20.12-javadoc.jar!/"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="com.aspose"/>
+			<attribute name="maven.artifactId" value="aspose-words"/>
+			<attribute name="maven.version" value="20.12"/>
+			<attribute name="maven.classifier" value="jdk17"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="/Java"/>
+	<classpathentry kind="lib" path="C:/Users/Frank Fang/Downloads/poi-4.1.1/lib/commons-compress-1.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Frank Fang/Downloads/poi-4.1.1/poi-4.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Frank Fang/Downloads/poi-4.1.1/poi-ooxml-4.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Frank Fang/Downloads/poi-4.1.1/poi-ooxml-schemas-4.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Frank Fang/Downloads/poi-4.1.1/poi-scratchpad-4.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Frank Fang/Downloads/poi-4.1.1/ooxml-lib/xmlbeans-3.1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

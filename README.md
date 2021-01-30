@@ -7,16 +7,13 @@
 - For learners to review and study their materials
 
 **Features**
-- Users can choose an Excel file to create a GUI test
+- Users can choose an Excel/Word file to create a GUI test
 - Users can see a screen shot of the file when choosing the file
 - Users can define which column are question, choices and correct answer in the excel file 
 - Users can practice the test in sequential or random order
 - Users can see the progresion of the test on side table
 - Users can get score for the test
 - Users can review the test after they took it
-
-**Further Features**
-- Users can create a test from a word file
 
 **Screenshot**
 

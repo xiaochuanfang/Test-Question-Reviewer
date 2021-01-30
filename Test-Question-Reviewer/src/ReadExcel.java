@@ -16,12 +16,12 @@ import com.aspose.cells.SheetRender;
 import com.aspose.cells.Workbook;
 import com.aspose.cells.Worksheet;
 
-public class Readexcel {
+public class ReadExcel {
 
 	final Number number=new Number();
 	
 	//Constructors
-	public Readexcel() {}
+	public ReadExcel() {}
 
 	public String fillQuestionList(ArrayList<Question> qlist, File file, int page, 
 			String typeColumn, String quesColumn, String ansColumn, String choiStartColumn, 

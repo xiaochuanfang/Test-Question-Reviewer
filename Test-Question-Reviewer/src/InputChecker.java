@@ -45,8 +45,4 @@ public class InputChecker {
 		}
 		return true;
 	}
-	
-	public boolean isEmptyString(String s) {
-		return (s==null || s.trim().isEmpty());
-	}
 }

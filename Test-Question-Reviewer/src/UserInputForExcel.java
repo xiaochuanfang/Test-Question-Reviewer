@@ -27,7 +27,7 @@ import javax.swing.JScrollPane;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class UserInput extends JDialog {
+public class UserInputForExcel extends JDialog {
 
 	private JTextArea taStatement;
 	private JTextArea taStartChoice;
@@ -40,7 +40,7 @@ public class UserInput extends JDialog {
 	private JLabel lbErrorColumn;
 	private JLabel lbErrorRow;
 
-	private Readexcel reader=new Readexcel();;
+	private ReadExcel reader=new ReadExcel();
 	private InputChecker check=new InputChecker();
 
 	private final Font font=new Font("Monospaced", Font.BOLD, 25);
@@ -53,7 +53,7 @@ public class UserInput extends JDialog {
 	 * Create the frame.
 	 * @throws Exception 
 	 */
-	public UserInput(File file){
+	public UserInputForExcel(File file){
 
 		//Create content pane
 		JPanel contentPane = new JPanel();
@@ -263,9 +263,9 @@ public class UserInput extends JDialog {
 				String inputEndAt=taEndRow.getText();
 
 				//Check if all inputs are enter
-				if(check.isEmptyString(inputType) || check.isEmptyString(inputQues) || check.isEmptyString(inputAns)
-						|| check.isEmptyString(inputChoi) || check.isEmptyString(inputChoi2)
-						|| check.isEmptyString(inputStartAt) ||check.isEmptyString(inputEndAt)){
+				if(StringMaster.isEmptyString(inputType) || StringMaster.isEmptyString(inputQues) || StringMaster.isEmptyString(inputAns)
+						|| StringMaster.isEmptyString(inputChoi) || StringMaster.isEmptyString(inputChoi2)
+						|| StringMaster.isEmptyString(inputStartAt) ||StringMaster.isEmptyString(inputEndAt)){
 					lbErrorEmpty.setText("Enter all fields to continue");
 					isAllValidInput=false;
 				}
@@ -290,7 +290,7 @@ public class UserInput extends JDialog {
 					try {
 						//Check if there any reading error message
 						String message = reader.fillQuestionList(qlist,file,0,inputType,inputQues,inputAns,inputChoi,inputChoi2,inputStartAt,inputEndAt);
-						if(check.isEmptyString(message)) {
+						if(StringMaster.isEmptyString(message)) {
 							
 							//Show dialog for user to choose test mode
 							TestMode mode=new TestMode(qlist);
@@ -298,7 +298,7 @@ public class UserInput extends JDialog {
 							//Save the input values for next time
 							saveDefaultValue();
 							
-							//Close UserInput GUI
+							//Close UserInputForExcel GUI
 							dispose();
 						}
 						else {
