@@ -21,6 +21,8 @@
 
 **Support**
 - Aspose.Cells
+- Aspose.Word
+- Apache POI HWPF and XWPF
 
 **Licence**
 - [MIT License](LICENSE)
