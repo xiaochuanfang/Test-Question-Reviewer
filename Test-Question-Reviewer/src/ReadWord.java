@@ -31,56 +31,63 @@ public class ReadWord {
 	private static Pattern ansPattern=Pattern.compile("[a-zA-Z]{1,}.*?\n*?\\s*?\\d{1,}\\.");
 	private static Pattern lastAnsPattern=Pattern.compile("[a-zA-Z]{1,}.*?\n*?\\s*?");
 	private static Pattern quesPattern=Pattern.compile("\\d+\\..*?[:?.]{1}\\s{2,}");
-
-	private static String previewImage="temp";	
-	private static String saveFormat=".png";	
+	
+	private final String PREVIEW_SUFFIX="_preview"; 
+	private final String IMG_EXTENSION=".png";
 
 	private String[] quesBlocks;				
-	private String errorMessage="";	 
+	private String errorMessage="";	
+	private String previewImgName;
 
 	/**
 	 * Create word document preview Image file.
 	 * Limit pages due to limitation of unlicensed Aspose product. 
-	 * @param file  word document to be read
+	 * @param file  Word document to be read
 	 * @return  generated preview Image file for the Word document
 	 * @throws Exception  if file not found
 	 */
 	public File createWordPreview(File file) throws Exception{
+
+		previewImgName=StringMaster.getFileName(file)+PREVIEW_SUFFIX;
 
 		//Open the word document
 		String wordDir=file.getAbsolutePath();
 		Document doc=new Document(wordDir);
 
 		//Save each word document pages into different image files
-		ImageSaveOptions options=new ImageSaveOptions(SaveFormat.TIFF);
+		ImageSaveOptions options=new ImageSaveOptions(SaveFormat.PNG);
 		options.setHorizontalResolution(170);
 		options.setVerticalResolution(170);
 		int pageCount=doc.getPageCount();
 		PageRange range=new PageRange(0,pageCount-1);
 		options.setPageSet(new PageSet(range));
 		options.setPageSavingCallback(new HandlePageSavingCallback());
-		doc.save(previewImage, options);
+		doc.save(previewImgName, options);
 
 		//Concatenate all images 
 		String[] imgList=new String[pageCount];
 		for(int i=0;i<pageCount;i++) {
-			imgList[i]=previewImage+i+saveFormat;
+			imgList[i]=previewImgName+i+IMG_EXTENSION;
 		}
 		appendImages(imgList);
+		
+		deleteFiles(imgList);
 
-		File previewImg=new File(previewImage+saveFormat);
+		File previewImg=new File(previewImgName+IMG_EXTENSION);
 
 		return previewImg;
 	}
-	
+
 	/**
-	 * Saves separate pages when saving a document to fixed page formats
+	 * Saves separate pages when saving a document to fixed page formats. Use to generate
+	 * different filename for each page generated.
 	 */
 	private class HandlePageSavingCallback implements IPageSavingCallback{
 
 		@Override
 		public void pageSaving(PageSavingArgs arg0) throws Exception {
-			arg0.setPageFileName(String.format(previewImage+arg0.getPageIndex()+saveFormat, arg0.getPageIndex()));
+			arg0.setPageFileName(String.format(previewImgName+
+					arg0.getPageIndex()+IMG_EXTENSION, arg0.getPageIndex()));
 		}
 
 	}
@@ -92,7 +99,7 @@ public class ReadWord {
 	 * @return  Image file that concatenate from given images 
 	 * @throws IOException  if image file not found
 	 */
-	private static File appendImages(String[] imgList) throws IOException {
+	private File appendImages(String[] imgList) throws IOException {
 
 		int size=imgList.length;
 
@@ -136,10 +143,24 @@ public class ReadWord {
 		gd.dispose();
 
 		//Save the final concatenate image
-		File concaImg=new File(previewImage+saveFormat);
+		File concaImg=new File(previewImgName+IMG_EXTENSION);
 		ImageIO.write(image, "png", concaImg);
-		
+
 		return concaImg;
+	}
+
+	/**
+	 * Delete list of files in file system.
+	 * @param fileList  Array of String contain the image file name
+	 */
+	private void deleteFiles(String[] fileList) {
+		int size=fileList.length;
+		//Create files for each image String
+		File[] fimgList=new File[size];
+		for(int i=0;i<size;i++) {
+			fimgList[i]=new File(fileList[i]);
+			fimgList[i].delete();
+		}
 	}
 
 	/**
@@ -399,9 +420,9 @@ public class ReadWord {
 	 * @return  Set of String of extracted correct choices  
 	 */
 	private Set<String> scrapeAnswer(int id) {
-		
+
 		String nextBlock=quesBlocks[id];
-		
+
 		//Create Set to store correct answer letter(s)
 		Set<String> ansSet=new HashSet<String>();
 

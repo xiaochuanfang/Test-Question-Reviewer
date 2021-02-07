@@ -1,15 +1,10 @@
 import java.awt.image.BufferedImage;
 import java.io.File;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
-
 import com.aspose.cells.Cell;
-
 import com.aspose.cells.ImageOrPrintOptions;
 import com.aspose.cells.PageSetup;
 import com.aspose.cells.SheetRender;
@@ -19,6 +14,8 @@ import com.aspose.cells.Worksheet;
 public class ReadExcel {
 
 	final Number number=new Number();
+	private final String PREVIEW_SUFFIX="_preview";
+	private final String IMG_EXTENSION=".png";
 	
 	//Constructors
 	public ReadExcel() {}
@@ -119,6 +116,13 @@ public class ReadExcel {
 		return message;
 	}
 
+	/**
+	 * Create Excel document preview Image file.
+	 * @param file  Excel document to be read
+	 * @param page  work sheet number of the Excel document
+	 * @return  generated preview Image file for the Excel document
+	 * @throws Exception    if file not found
+	 */
 	public File createExcelPreview(File file, int page) throws Exception {
 
 		//Open the excel file with target page
@@ -130,27 +134,26 @@ public class ReadExcel {
 		PageSetup pageSetup=sheet.getPageSetup();
 		pageSetup.setPrintHeadings(true);
 
-		//Define ImageOrPrintOptions
+		//Set resolution and limit one page per work sheet 
 		ImageOrPrintOptions imgOptions = new ImageOrPrintOptions();
-		imgOptions.setVerticalResolution(170);			// Set resolution
+		imgOptions.setVerticalResolution(170);
 		imgOptions.setHorizontalResolution(170);
 		imgOptions.setOnePagePerSheet(true);
 
-		//imgOptions.setImageFormat(ImageFormat.getJpeg());  //Set desired image extension
-		//imgOptions.setDesiredSize(2818, 1754);		//Set desire size
-
-		// Render the sheet with respect to specified image/print options
+		//Render the sheet with respect to specified image/print options
 		SheetRender render = new SheetRender(sheet, imgOptions);
-		String sheetPreview="temp.jpg";		//Name of the temporary image
+		String sheetPreview="temp.png";		//Name of the temporary image
 		render.toImage(0,sheetPreview);
 
-		//Crop image to remove unnecessary border from Aspose
+		//Crop image to remove unnecessary side space
 		String currentDir=System.getProperty("user.dir")+System.getProperty("file.separator");
 		File sheetImg=new File(currentDir+sheetPreview);	
 		BufferedImage bufferImg=ImageIO.read(sheetImg);		//Read rendered image
-		BufferedImage cropImg=bufferImg.getSubimage(100, 135, bufferImg.getWidth()-170, bufferImg.getHeight()-135);	//Crop image
-		File previewImg=new File(currentDir+"Preivew.jpg");	
-		ImageIO.write(cropImg, "jpg", previewImg);			//Create image
+		BufferedImage cropImg=bufferImg.getSubimage(100, 0, 
+				bufferImg.getWidth()-170, bufferImg.getHeight());	//Crop image
+		String imgFilename=(StringMaster.getFileName(file)+PREVIEW_SUFFIX+IMG_EXTENSION);
+		File previewImg=new File(imgFilename);
+		ImageIO.write(cropImg, "png", previewImg);			//Create image
 
 		//Delete temporary generate image
 		sheetImg.delete();

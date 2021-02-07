@@ -20,8 +20,7 @@
 **Installation**
 
 **Support**
-- Aspose.Cells
-- Aspose.Word
+- Aspose.Cells and Aspose.Word
 - Apache POI HWPF and XWPF
 
 **Licence**

@@ -10,6 +10,15 @@ public class StringMaster {
 		}
 		else return "";
 	}
+	
+	
+	public static String getFileName(File file) {
+		String filename=file.getName();
+		if(filename.lastIndexOf(".")!=-1) {
+			filename=filename.substring(0,filename.lastIndexOf("."));
+		}
+		return filename;
+	}
 
 	//Remove space or line feed from front and back
 	public static String removeFrontAndBackSpace(String s) {
