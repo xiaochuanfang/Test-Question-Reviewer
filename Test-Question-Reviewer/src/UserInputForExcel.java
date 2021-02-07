@@ -310,8 +310,7 @@ public class UserInputForExcel extends JDialog {
 						}
 
 					} catch (Exception e) {
-						System.out.println("e toString is "+e.toString());
-						System.out.println("e getmessage is "+e.getMessage());
+						e.printStackTrace();
 					}
 
 				}

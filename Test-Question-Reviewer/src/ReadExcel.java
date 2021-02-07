@@ -20,11 +20,27 @@ public class ReadExcel {
 	//Constructors
 	public ReadExcel() {}
 
+	/**
+	 * Populate the ArrayList with Question objects.
+	 * @param qlist  ArrayList to be fill with Question object
+	 * @param file  Excel File to be read in order to collect information to create Question objects
+	 * @param page  work sheet number of the Excel workbook to be read
+	 * @param typeColumn  String that store which column that contain Question type
+	 * @param quesColumn  String that store which column that contain Question statement
+	 * @param ansColumn  String that store which column that contain Question answer
+	 * @param choiStartColumn  String that store which column that contain Question choices start column
+	 * @param choiEndColumn  String that store which column that contain Question choices end column
+	 * @param startRow  String that store which column that contain Question start row
+	 * @param endRow  String that store which column that contain Question end row
+	 * @return   String that stores error message while creating Question object, if any
+	 * @throws Exception  if file not found
+	 */
 	public String fillQuestionList(ArrayList<Question> qlist, File file, int page, 
 			String typeColumn, String quesColumn, String ansColumn, String choiStartColumn, 
 			String choiEndColumn, String startRow, String endRow) throws Exception {
 
 		String message="";
+		int id=1;
 		
 		//Open the excel file with target page
 		String sheetDir=file.getAbsolutePath();
@@ -54,9 +70,10 @@ public class ReadExcel {
 
 		//Read current row until the last row
 		while(currentRow<=lastRow) {
-
+			
 			//Create a Question object
 			Question question=new Question();
+			question.setId(Integer.toString(id));
 
 			//Get the cell for type, question and answer for current row
 			Cell type=sheet.getCells().get(typeColumn+currentRow);
@@ -64,7 +81,6 @@ public class ReadExcel {
 			Cell answer=sheet.getCells().get(ansColumn+currentRow);
 
 			//Set the Question object's id, question
-			question.setId(Integer.toString(currentRow));
 			question.setStatement(statement.getStringValue());
 
 			//Set the Question object's type
@@ -112,6 +128,7 @@ public class ReadExcel {
 			//Add the Question object into the question list and increment the question number
 			qlist.add(question);
 			currentRow++;
+			id++;
 		}
 		return message;
 	}

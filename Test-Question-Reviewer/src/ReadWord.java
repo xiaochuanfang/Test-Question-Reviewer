@@ -176,12 +176,14 @@ public class ReadWord {
 
 		//Split the text into blocks base on answer index
 		quesBlocks=text.split(ansPrefix);
+		int id=1;
 
 		/*Looping from first block to n-1 block, since the last block contain only 
 		 * answer for the last question
 		 */
 		for(int i=0;i<quesBlocks.length-1;i++) {
-			qlist=createQuestion(qlist,i);	
+			
+			qlist=createQuestion(qlist,id);	
 			qlist=addQuestionAns(qlist,i);
 
 			/*If not error after add the answer, then continue add Question's statement
@@ -203,18 +205,10 @@ public class ReadWord {
 			else{
 				return errorMessage;
 			}
+			
+			id++;
 		}
 
-		/*
-		for(int k=0;k<qlist.size();k++) {
-			Question q=qlist.get(k);
-			System.out.println("Question "+k+": "+q.getStatement());
-			System.out.println("Choice are ");
-			for(int l=0;l<q.getChoices().size();l++) {
-				System.out.println(l+": "+q.getChoices().get(l));
-			}
-			System.out.println("Answer: "+q.getCorrectAns());
-		}*/
 		return errorMessage;
 	}
 
