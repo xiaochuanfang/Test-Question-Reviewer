@@ -346,7 +346,7 @@ public class Test extends JFrame {
 		while(count!=NumOfChoice) {
 			button=blist.get(count);
 			button.setVisible(true);
-			button.setText(question.getChoices().get(count));
+			button.setText("<html>"+question.getChoices().get(count));
 			button.setBackground(null);
 			count++;
 		}
