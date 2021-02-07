@@ -263,7 +263,7 @@ public class Test extends JFrame {
 		//Set the Question object's select answer and correct answer
 		Set<String> correctAns=question.getCorrectAns();
 		question.setSelectAns(selectAns);
-		question.setCorrectAns(correctAns);
+		//question.setCorrectAns(correctAns);
 
 		//Set the Question object's correctness
 		if(selectAns.equals(correctAns)) {

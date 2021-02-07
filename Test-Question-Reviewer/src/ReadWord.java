@@ -176,14 +176,13 @@ public class ReadWord {
 
 		//Split the text into blocks base on answer index
 		quesBlocks=text.split(ansPrefix);
-		int id=1;
 
 		/*Looping from first block to n-1 block, since the last block contain only 
 		 * answer for the last question
 		 */
 		for(int i=0;i<quesBlocks.length-1;i++) {
 			
-			qlist=createQuestion(qlist,id);	
+			qlist=createQuestion(qlist,i);	
 			qlist=addQuestionAns(qlist,i);
 
 			/*If not error after add the answer, then continue add Question's statement
@@ -205,8 +204,6 @@ public class ReadWord {
 			else{
 				return errorMessage;
 			}
-			
-			id++;
 		}
 
 		return errorMessage;
@@ -254,13 +251,15 @@ public class ReadWord {
 	/**
 	 * Create Question object and its ID and add to Question object List.
 	 * @param qlist  ArrayList that holds the Question object
-	 * @param id  integer that represent Question object's ID
+	 * @param i  Integer that represent Question object ID
 	 * @return  ArrayList that holds the Question object
 	 */
-	private ArrayList<Question> createQuestion(ArrayList<Question> qlist, int id) {
+	private ArrayList<Question> createQuestion(ArrayList<Question> qlist, int i) {
 
+		//Since ArrayList index starts with 0, increment actual id by 1 
+		i++;
 		Question ques=new Question();
-		ques.setId(String.valueOf(id));
+		ques.setId(String.valueOf(i));
 		qlist.add(ques);
 
 		return qlist;
@@ -269,20 +268,20 @@ public class ReadWord {
 	/**
 	 * Add a Question object's answer. Question objects are store in ArrayList.
 	 * @param qlist  ArrayList that holds the Question object
-	 * @param id  integer that represent Question object's ID
+	 * @param i  Integer indicates which Question object in the ArrayList and which text block
 	 * @return  ArrayList that holds the Question objects
 	 */
-	private ArrayList<Question> addQuestionAns(ArrayList<Question> qlist, int id){
+	private ArrayList<Question> addQuestionAns(ArrayList<Question> qlist, int i){
 
 		//Extract answer from the next block since answer is in the next block
-		int j=id+1;
+		int j=i+1;
 
 		Set<String> ansSet=scrapeAnswer(j);
 		if(ansSet.isEmpty()) {
 			writeErrorMessage("answer",j);
 		}
 		else {
-			qlist.get(id).setCorrectAns(ansSet);
+			qlist.get(i).setCorrectAns(ansSet);
 		}
 		return qlist;
 	}
@@ -290,23 +289,23 @@ public class ReadWord {
 	/**
 	 * Add Question object's statement. Question objects are store in ArrayList.
 	 * @param qlist  ArrayList that holds the Question object
-	 * @param id  integer that represent Question object's ID
+	 * @param i  Integer indicates which Question object in the ArrayList and which text block
 	 * @return  ArrayList that holds the Question objects
 	 */
-	private ArrayList<Question> addQuestionStatement(ArrayList<Question> qlist, int id) {
+	private ArrayList<Question> addQuestionStatement(ArrayList<Question> qlist, int i) {
 
-		Question ques=qlist.get(id);
+		Question ques=qlist.get(i);
 
 		//Extract the Question statement from the #id text block
-		String statement=scrapeStatement(id);
+		String statement=scrapeStatement(i);
 		if(!statement.isEmpty()) {
 			ques.setStatement(statement);
 		}
 
 		//If can't find the question, write an error errorMessage
 		else {
-			id++;
-			writeErrorMessage("question",id);
+			i++;
+			writeErrorMessage("question",i);
 		}
 		return qlist;
 	}
@@ -315,12 +314,12 @@ public class ReadWord {
 	 * Add Question object's choices. Question objects are store in ArrayList. 
 	 * Choices are store in ArrayList.
 	 * @param qlist  ArrayList that holds the Question object
-	 * @param id  integer that represent Question object's ID
+	 * @param i  Integer indicates which Question object in the ArrayList and which text block
 	 * @return  ArrayList that holds the Question objects
 	 */
-	private ArrayList<Question> addQuestionChoices(ArrayList<Question> qlist, int id) {
+	private ArrayList<Question> addQuestionChoices(ArrayList<Question> qlist, int i) {
 
-		String block=quesBlocks[id];
+		String block=quesBlocks[i];
 
 		//Create ArrayList instance to store the choices
 		ArrayList<String> choicesList=new ArrayList<String>();
@@ -350,8 +349,8 @@ public class ReadWord {
 			 * since start choice index is from the next choice index
 			 */
 			if(!isValidChoice(block,startIndex)) {
-				id++;
-				writeErrorMessage("choices",id);
+				i++;
+				writeErrorMessage("choices",i);
 				return qlist;
 			}
 
@@ -371,7 +370,7 @@ public class ReadWord {
 
 			//If both start and end index are validated, scrape the choice, and go to next choice
 			if(endIndex!=-1) {
-				choicesList.add(scrapeChoice(id,startIndex,endIndex,false));					
+				choicesList.add(scrapeChoice(i,startIndex,endIndex,false));					
 				currLetter=nextLetter;
 			}
 		}
@@ -380,26 +379,26 @@ public class ReadWord {
 		 *since multiple choices question cannot has only one choice 
 		 */
 		if(choicesList.size()==0) {
-			id++;
-			writeErrorMessage("choices",id);
+			i++;
+			writeErrorMessage("choices",i);
 			return qlist;
 		}
 
 		//Add the last choice and set the Question object's choices list
-		String lastChoice=scrapeChoice(id,startIndex,endIndex,true);
+		String lastChoice=scrapeChoice(i,startIndex,endIndex,true);
 
 		//If the last choice contains the next question statement, write an error message
 		Matcher ansMatcher=ansPattern.matcher(lastChoice);
 		if(ansMatcher.find()) {
-			id++;
-			writeErrorMessage("answer",id);
+			i++;
+			writeErrorMessage("answer",i);
 			return qlist;
 		}
 		else {
 			choicesList.add(lastChoice);
 		}
 
-		qlist.get(id).setChoices(choicesList);
+		qlist.get(i).setChoices(choicesList);
 
 		return qlist;
 	}
@@ -410,12 +409,12 @@ public class ReadWord {
 	 * any new line with or without by any space follow by a digit follow by a period
 	 * lastAnsPattern: any one alphabet with or without any character with or without
 	 * any new line with or without by any space 
-	 * @param id  integer indicates which Question object and which text block
+	 * @param i  Integer indicates which text block
 	 * @return  Set of String of extracted correct choices  
 	 */
-	private Set<String> scrapeAnswer(int id) {
+	private Set<String> scrapeAnswer(int i) {
 
-		String nextBlock=quesBlocks[id];
+		String nextBlock=quesBlocks[i];
 
 		//Create Set to store correct answer letter(s)
 		Set<String> ansSet=new HashSet<String>();
@@ -430,7 +429,7 @@ public class ReadWord {
 		if(ansMatcher.find()) {
 			ansSentence=ansMatcher.group();
 			String ansPart=ansSentence.substring(0,ansSentence.length()-2);
-			quesBlocks[id]=quesBlocks[id].replace(ansPart, "");
+			quesBlocks[i]=quesBlocks[i].replace(ansPart, "");
 		}
 
 		/*If it's the last question answer, which contain only answer and no
@@ -453,7 +452,7 @@ public class ReadWord {
 		for(int k=0;k<answer.length();k++) {
 			String choice=answer.substring(k,k+1);
 			if(!StringMaster.isEmptyString(choice)) {
-				ansSet.add(choice);
+				ansSet.add(choice.toUpperCase());
 			}
 		}
 
@@ -465,11 +464,11 @@ public class ReadWord {
 	 * Extract Statement from the text block. Block number is base on id.
 	 * quesPattern: one digit follow by dot follow by any character (reluctant mode)
 	 * follow by a colon or a question mark or a period follow by two or more space
-	 * @param id  integer indicates which Question object and which text block
+	 * @param i  Integer indicates which text block
 	 * @return  String of extracted statement
 	 */
-	private String scrapeStatement(int id) {
-		String block=quesBlocks[id];
+	private String scrapeStatement(int i) {
+		String block=quesBlocks[i];
 		String statement="";
 
 		/*If question matcher find, remove the question # from front and choice letter
@@ -486,14 +485,14 @@ public class ReadWord {
 
 	/**
 	 * Extract choices from the text block. Block number is base on id.
-	 * @param id  integer indicates which Question object and which text block
-	 * @param startIndex  integer indicates the start index of a choice 
-	 * @param endIndex  integer indicates the end index of a choice
-	 * @param isLastChoice  flag indicates whether the scraping choice is the last choice
-	 * @return  String of the extracted choice
+	 * @param i  Integer indicates which text block
+	 * @param startIndex  Integer indicates the start index of a choice 
+	 * @param endIndex  Integer indicates the end index of a choice
+	 * @param isLastChoice  Boolean indicates whether the scraping choice is the last choice
+	 * @return  String for the extracted choice
 	 */
-	private String scrapeChoice(int id, int startIndex, int endIndex, boolean isLastChoice) {
-		String block=quesBlocks[id];
+	private String scrapeChoice(int i, int startIndex, int endIndex, boolean isLastChoice) {
+		String block=quesBlocks[i];
 		String choice="";
 
 		//If it's the last choice, exclude the choice letter and scrape the choice till the end of String
@@ -516,17 +515,17 @@ public class ReadWord {
 
 	/**
 	 * Record any error on a String while extracting information from the document. 
-	 * @param errorType  String value of scraping error. Either "Statement", "Choice" or "Answer"
-	 * @param id  integer value indicate which question did the scraping error occur
+	 * @param errorType  String of scraping error. Either "Statement", "Choice" or "Answer"
+	 * @param i  Integer indicate which question block did the scraping error occur
 	 */
-	private void writeErrorMessage(String errorType, int id) {
-		errorMessage="Error while extracting "+errorType+" for question "+id;
+	private void writeErrorMessage(String errorType, int i) {
+		errorMessage="Error while extracting "+errorType+" for question "+i;
 	}
 
 	/**
 	 * Check whether the choice letter is exist and valid.  
-	 * @param block  String value of text block where the choice letter is scrape on
-	 * @param index  integer value for the position of choice on the block 
+	 * @param block  String of text block where the choice letter is scrape on
+	 * @param index  Integer for the position of choice on the text block 
 	 * @return  false if can't the index in the block, or it's not a valid choice letter.
 	 * 			True otherwise.
 	 */
